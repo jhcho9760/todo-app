@@ -1,6 +1,1 @@
-{
-  "/api/todos/[id]/route": "app/api/todos/[id]/route.js",
-  "/api/todos/route": "app/api/todos/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js"
-}
+{}
