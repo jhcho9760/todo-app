@@ -55,9 +55,6 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
           <span className={`text-sm font-medium ${todo.completed ? 'line-through text-gray-400' : ''}`}>
             {todo.title}
           </span>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PRIORITY_COLORS[todo.priority]}`}>
-            {PRIORITY_LABELS[todo.priority]}
-          </span>
           {dueDate && (
             <span className="text-xs text-gray-500">📅 {dueDate}</span>
           )}
