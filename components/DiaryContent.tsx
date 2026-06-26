@@ -306,7 +306,7 @@ export default function DiaryContent() {
             />
 
             {/* 사진 섹션 */}
-            <div className="mt-4" style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
+            <div className="mt-4">
               <input
                 ref={fileInputRef}
                 type="file"
