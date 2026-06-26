@@ -7,6 +7,7 @@ interface Props {
   onSubmit: (data: CreateTodoInput) => void
   initialValues?: Todo
   onCancel?: () => void
+  initialDate?: string
 }
 
 const PRIORITIES: Priority[] = ['LOW', 'MEDIUM', 'HIGH']
@@ -29,12 +30,14 @@ const inputStyle: React.CSSProperties = {
   outline: "none",
 }
 
-export default function TodoForm({ onSubmit, initialValues, onCancel }: Props) {
+export default function TodoForm({ onSubmit, initialValues, onCancel, initialDate }: Props) {
   const [title, setTitle] = useState(initialValues?.title ?? '')
   const [description, setDescription] = useState(initialValues?.description ?? '')
   const [priority, setPriority] = useState<Priority>(initialValues?.priority ?? 'MEDIUM')
   const [dueDate, setDueDate] = useState(
-    initialValues?.dueDate ? initialValues.dueDate.split('T')[0] : ''
+    initialValues?.dueDate
+      ? initialValues.dueDate.split('T')[0]
+      : (initialDate ?? '')
   )
   const [category, setCategory] = useState(initialValues?.category ?? '')
   const [tagInput, setTagInput] = useState(initialValues?.tags.join(', ') ?? '')
