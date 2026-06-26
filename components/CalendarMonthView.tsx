@@ -98,7 +98,13 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                       </div>
                     ))}
                     {overflow > 0 && (
-                      <div className="text-xs" style={{ color: '#7a7a7a' }}>+{overflow}개 더</div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onDayClick(dateStr) }}
+                        className="text-xs font-medium hover:underline"
+                        style={{ color: '#0066cc' }}
+                      >
+                        +{overflow}개 더
+                      </button>
                     )}
                   </div>
                 </button>
