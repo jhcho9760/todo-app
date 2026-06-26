@@ -29,7 +29,10 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
   }
 
   const dueDate = todo.dueDate
-    ? new Date(todo.dueDate).toLocaleDateString('ko-KR')
+    ? (() => {
+        const [y, m, d] = todo.dueDate!.split('T')[0].split('-').map(Number)
+        return new Date(y, m - 1, d).toLocaleDateString('ko-KR')
+      })()
     : null
 
   return (

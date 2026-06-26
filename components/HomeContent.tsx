@@ -18,8 +18,13 @@ const VIEW_TABS = [
 
 type View = 'month' | 'week' | 'today' | 'tomorrow'
 
+function parseDateParam(dateParam: string): Date {
+  const [y, m, d] = dateParam.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
 function getDateForView(view: View, dateParam: string | null): Date {
-  if (dateParam) return new Date(dateParam)
+  if (dateParam) return parseDateParam(dateParam)
   if (view === 'tomorrow') {
     const d = new Date()
     d.setDate(d.getDate() + 1)
