@@ -317,9 +317,9 @@ export default function DiaryContent() {
               />
 
               {editPhotos.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div className="flex flex-col gap-3 mb-4">
                   {editPhotos.map((fileId) => (
-                    <div key={fileId} className="relative group rounded-[12px] overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                    <div key={fileId} className="relative group rounded-[14px] overflow-hidden" style={{ aspectRatio: '4/3' }}>
                       <img
                         src={getDriveImageUrl(fileId)}
                         alt=""
@@ -328,8 +328,8 @@ export default function DiaryContent() {
                       />
                       <button
                         onClick={() => handlePhotoDelete(fileId)}
-                        className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '16px' }}
+                        className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '18px' }}
                       >
                         ×
                       </button>
@@ -341,20 +341,17 @@ export default function DiaryContent() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-[10px] transition-colors"
+                className="flex items-center justify-center rounded-full transition-transform active:scale-95"
                 style={{
-                  fontSize: '14px',
-                  color: uploading ? '#b0b0b5' : 'var(--text-secondary)',
-                  backgroundColor: 'var(--bg-hover)',
-                  border: '1px dashed var(--border)',
+                  width: '44px',
+                  height: '44px',
+                  backgroundColor: uploading ? '#b0b0b5' : '#0066cc',
+                  color: '#ffffff',
+                  fontSize: '26px',
+                  lineHeight: 1,
                 }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polyline points="17 8 12 3 7 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                {uploading ? '업로드 중...' : '사진 추가'}
+                {uploading ? '…' : '+'}
               </button>
             </div>
 
