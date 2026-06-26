@@ -32,21 +32,13 @@ export async function uploadToDrive(
 ): Promise<string> {
   const drive = await getDriveClient()
 
-  const folderId = await getOrCreateFolder(drive)
-
   const { PassThrough } = await import('stream')
   const stream = new PassThrough()
   stream.end(buffer)
 
   const res = await drive.files.create({
-    requestBody: {
-      name: filename,
-      parents: [folderId],
-    },
-    media: {
-      mimeType,
-      body: stream,
-    },
+    requestBody: { name: filename },
+    media: { mimeType, body: stream },
     fields: 'id',
   })
 
