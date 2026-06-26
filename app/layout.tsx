@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import NavBar from '@/components/NavBar'
+import Sidebar from '@/components/Sidebar'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -22,7 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }>
           <NavBar />
         </Suspense>
-        {children}
+        <div className="flex">
+          <Suspense fallback={<aside style={{ width: '180px', flexShrink: 0 }} />}>
+            <Sidebar />
+          </Suspense>
+          <div className="flex-1 min-w-0">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   )

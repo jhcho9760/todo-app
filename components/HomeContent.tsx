@@ -113,7 +113,7 @@ export default function HomeContent() {
     : '월간'
 
   return (
-    <main className="max-w-3xl mx-auto px-4" style={{ paddingBottom: '80px' }}>
+    <main className="max-w-3xl px-6" style={{ paddingBottom: '80px' }}>
       {/* 다크 헤더 타일 */}
       <div
         className="mx-[-16px] px-8 pt-12 pb-10 mb-8"
