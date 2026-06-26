@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const filename = `${Date.now()}-${file.name.replace(/\.[^.]+$/, '')}.jpg`
   const fileId = await uploadToDrive(rotated, filename, 'image/jpeg')
-  return NextResponse.json({ fileId })
+  return NextResponse.json({ fileId, folderId: process.env.GOOGLE_DRIVE_FOLDER_ID ?? 'NOT SET' })
 }
 
 export async function DELETE(req: NextRequest) {
