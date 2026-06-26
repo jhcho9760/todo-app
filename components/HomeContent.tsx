@@ -118,9 +118,9 @@ export default function HomeContent() {
     : '월간'
 
   return (
-    <main className="max-w-3xl mx-auto px-6" style={{ paddingBottom: '80px' }}>
+    <main className="max-w-3xl mx-auto px-4 md:px-6" style={{ paddingBottom: '80px' }}>
       {/* 상단 헤더 */}
-      <div className="px-2 pt-10 pb-8 mb-6">
+      <div className="px-1 pt-6 md:pt-10 pb-6 md:pb-8 mb-4 md:mb-6">
         <h1
           className="font-semibold"
           style={{ fontSize: '34px', lineHeight: '1.1', letterSpacing: '-0.28px', color: 'var(--text-primary)' }}

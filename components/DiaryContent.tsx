@@ -104,7 +104,7 @@ export default function DiaryContent() {
     : ''
 
   return (
-    <main className="px-8 py-10" style={{ maxWidth: '960px', paddingBottom: '80px' }}>
+    <main className="px-4 md:px-8 py-6 md:py-10" style={{ maxWidth: '960px', paddingBottom: '80px' }}>
       {/* 헤더 */}
       <div className="mb-8">
         <h1 className="font-semibold" style={{ fontSize: '34px', color: 'var(--text-primary)', letterSpacing: '-0.28px' }}>
@@ -113,7 +113,7 @@ export default function DiaryContent() {
         <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginTop: '4px' }}>날짜를 선택해서 일기를 작성하세요</p>
       </div>
 
-      <div className={`gap-6 ${selectedDate ? 'grid' : ''}`} style={selectedDate ? { gridTemplateColumns: '1fr 420px' } : {}}>
+      <div className={selectedDate ? 'flex flex-col md:grid gap-4 md:gap-6' : ''} style={selectedDate ? { gridTemplateColumns: '1fr 420px' } : {}}>
         {/* 달력 */}
         <div
           className="rounded-[18px] p-6"

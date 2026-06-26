@@ -26,7 +26,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="sticky top-[44px] h-[calc(100vh-44px)] flex-shrink-0 overflow-y-auto pt-4 pb-8"
+      className="hidden md:flex md:flex-col sticky top-[44px] h-[calc(100vh-44px)] flex-shrink-0 overflow-y-auto pt-4 pb-8"
       style={{ width: '200px', backgroundColor: 'var(--bg-sidebar)', borderRight: '1px solid var(--border)' }}
     >
       {/* 대시보드 링크 */}

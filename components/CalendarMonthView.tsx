@@ -66,7 +66,7 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                 <button
                   key={dateStr}
                   onClick={() => onDayClick(dateStr)}
-                  className="p-2 text-left min-h-[80px]"
+                  className="p-1 md:p-2 text-left min-h-[56px] md:min-h-[80px]"
                   style={{
                     backgroundColor: 'var(--bg-card)',
                     borderRight: '1px solid var(--border-light)',
@@ -74,7 +74,7 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                 >
                   <div className="mb-1">
                     <span
-                      className="w-6 h-6 rounded-full inline-flex items-center justify-center text-sm"
+                      className="w-5 h-5 md:w-6 md:h-6 rounded-full inline-flex items-center justify-center"
                       style={{
                         backgroundColor: today ? '#0066cc' : 'transparent',
                         color: today ? '#ffffff' : currentMonth ? 'var(--text-primary)' : '#d2d2d7',
@@ -84,7 +84,8 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                       {day.getDate()}
                     </span>
                   </div>
-                  <div className="space-y-0.5">
+                  {/* 데스크탑: 텍스트 todo 표시 */}
+                  <div className="hidden md:block space-y-0.5">
                     {dayTodos.slice(0, MAX_VISIBLE).map((todo) => (
                       <div
                         key={todo.id}
@@ -107,6 +108,21 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                       </button>
                     )}
                   </div>
+                  {/* 모바일: 점으로만 표시 */}
+                  {dayTodos.length > 0 && (
+                    <div className="md:hidden flex gap-0.5 justify-center mt-0.5">
+                      {dayTodos.slice(0, 3).map((todo) => (
+                        <span
+                          key={todo.id}
+                          className="w-1 h-1 rounded-full"
+                          style={{ backgroundColor: todo.completed ? '#d2d2d7' : '#0066cc' }}
+                        />
+                      ))}
+                      {dayTodos.length > 3 && (
+                        <span className="w-1 h-1 rounded-full" style={{ backgroundColor: '#d2d2d7' }} />
+                      )}
+                    </div>
+                  )}
                 </button>
               )
             })}

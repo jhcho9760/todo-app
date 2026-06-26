@@ -130,14 +130,14 @@ export default function Dashboard() {
   )
 
   return (
-    <main className="px-8 py-10" style={{ maxWidth: '960px', paddingBottom: '80px' }}>
-      <div className="mb-8">
+    <main className="px-4 md:px-8 py-6 md:py-10" style={{ maxWidth: '960px', paddingBottom: '80px' }}>
+      <div className="mb-6 md:mb-8">
         <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '6px' }}>{greeting}, 나윤님</p>
-        <h1 className="font-semibold" style={{ fontSize: '34px', color: '#1d1d1f', letterSpacing: '-0.28px' }}>대시보드</h1>
+        <h1 className="font-semibold" style={{ fontSize: '28px', color: 'var(--text-primary)', letterSpacing: '-0.28px' }}>대시보드</h1>
       </div>
 
       {/* 날짜/시간 + 날씨 + D-day */}
-      <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: weather ? '1fr 1fr 1fr' : dday ? '1fr 1fr' : '1fr' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
         {/* 날짜/시간 */}
         <div className="rounded-[18px] p-6" style={{ backgroundColor: '#1d1d1f' }}>
           <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', marginBottom: '8px' }}>오늘</p>
@@ -198,7 +198,7 @@ export default function Dashboard() {
       {/* 연애 시작일 입력 모달 */}
       {editingDate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-          <div className="rounded-[20px] p-8 w-80" style={{ backgroundColor: '#ffffff' }}>
+          <div className="rounded-[20px] p-6 md:p-8 mx-4 w-full md:w-80" style={{ backgroundColor: 'var(--bg-card)', maxWidth: '320px' }}>
             <h2 className="font-semibold mb-2" style={{ fontSize: '20px', color: 'var(--text-primary)' }}>연애 시작일</h2>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px' }}>처음 만난 날을 입력해주세요 💕</p>
             <input
@@ -226,7 +226,7 @@ export default function Dashboard() {
       )}
 
       {/* 업무 통계 */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
         <StatCard label="전체 할 일" value={total} color="#1d1d1f" />
         <StatCard label="미완료" value={incomplete} color="#ff3b30" />
         <StatCard label="완료" value={completed} color="#34c759" />
@@ -244,7 +244,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         {/* 오늘 할 일 */}
         <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
@@ -352,10 +352,10 @@ export default function Dashboard() {
 
 function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{label}</p>
-      <p className="font-semibold" style={{ fontSize: '32px', color, letterSpacing: '-0.5px', lineHeight: 1 }}>
-        {value}<span style={{ fontSize: '16px', fontWeight: 400, marginLeft: '2px' }}>개</span>
+    <div className="rounded-[14px] md:rounded-[18px] p-3 md:p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>{label}</p>
+      <p className="font-semibold" style={{ fontSize: '26px', color, letterSpacing: '-0.5px', lineHeight: 1 }}>
+        {value}<span style={{ fontSize: '14px', fontWeight: 400, marginLeft: '2px' }}>개</span>
       </p>
     </div>
   )

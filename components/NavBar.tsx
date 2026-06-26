@@ -26,11 +26,12 @@ export default function NavBar() {
       </Link>
 
       <div className="flex items-center gap-5">
+        {/* 데스크탑 nav 항목 */}
         {NAV_ITEMS.map(({ label, view }) => (
           <Link
             key={view}
             href={`/?view=${view}`}
-            className="font-normal tracking-[-0.12px] transition-colors"
+            className="hidden md:block font-normal tracking-[-0.12px] transition-colors"
             style={{ fontSize: '12px', color: currentView === view ? '#ffffff' : '#7a7a7a' }}
           >
             {label}

@@ -50,7 +50,8 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
     <div>
       <CalendarHeader label={weekLabel} onPrev={handlePrev} onNext={handleNext} />
 
-      <div className="grid grid-cols-7 gap-2 mb-4">
+      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-4">
+      <div className="grid grid-cols-7 gap-1 md:gap-2" style={{ minWidth: '480px' }}>
         {days.map((day) => {
           const dayTodos = todosForDay(day)
           const todayStyle = isToday(day)
@@ -103,6 +104,7 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
             </div>
           )
         })}
+      </div>
       </div>
 
       {addingDate && (
