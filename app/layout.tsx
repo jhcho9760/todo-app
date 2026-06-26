@@ -5,7 +5,7 @@ import Sidebar from '@/components/Sidebar'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'To-Do Board',
+  title: '나윤\'s Board',
   description: '공용 To-Do 보드',
 }
 

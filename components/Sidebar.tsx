@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 const SUB_ITEMS = [
@@ -13,7 +13,9 @@ const SUB_ITEMS = [
 
 export default function Sidebar() {
   const searchParams = useSearchParams()
-  const currentView = searchParams.get('view') ?? 'month'
+  const pathname = usePathname()
+  const currentView = searchParams.get('view')
+  const isDashboard = pathname === '/' && !currentView
   const [open, setOpen] = useState(true)
 
   return (
@@ -21,24 +23,44 @@ export default function Sidebar() {
       className="sticky top-[44px] h-[calc(100vh-44px)] flex-shrink-0 overflow-y-auto pt-4 pb-8"
       style={{ width: '200px', backgroundColor: '#f5f5f7', borderRight: '1px solid #e0e0e0' }}
     >
-      {/* To-Do 섹션 헤더 */}
+      {/* 대시보드 링크 */}
+      <nav className="px-2 mb-3">
+        <Link
+          href="/"
+          className="flex items-center gap-2 px-3 py-2 rounded-[8px] transition-colors"
+          style={{
+            fontSize: '14px',
+            fontWeight: isDashboard ? 600 : 400,
+            color: isDashboard ? '#0066cc' : '#1d1d1f',
+            backgroundColor: isDashboard ? 'rgba(0,102,204,0.1)' : 'transparent',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3" />
+            <rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3" />
+            <rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3" />
+            <rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3" />
+          </svg>
+          대시보드
+        </Link>
+      </nav>
+
+      <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '0 12px 12px' }} />
+
+      {/* 업무 To-Do 섹션 헤더 */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-2 group"
+        className="w-full flex items-center justify-between px-4 py-2"
       >
         <span
-          className="font-semibold tracking-wide uppercase"
-          style={{ fontSize: '11px', color: '#7a7a7a', letterSpacing: '0.06em' }}
+          className="font-semibold"
+          style={{ fontSize: '11px', color: '#7a7a7a', letterSpacing: '0.06em', textTransform: 'uppercase' }}
         >
-          To-Do
+          업무 To-Do
         </span>
         <svg
           width="10" height="6" viewBox="0 0 10 6" fill="none"
-          style={{
-            transform: open ? 'rotate(0deg)' : 'rotate(-90deg)',
-            transition: 'transform 0.2s',
-            color: '#7a7a7a',
-          }}
+          style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s', color: '#7a7a7a' }}
         >
           <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

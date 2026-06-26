@@ -20,11 +20,11 @@ export default function NavBar() {
       style={{ backgroundColor: '#000000', height: '44px' }}
     >
       <Link
-        href="/?view=month"
+        href="/"
         className="font-normal tracking-[-0.12px]"
         style={{ fontSize: '12px', color: '#ffffff' }}
       >
-        To-Do Board
+        나윤&apos;s Board
       </Link>
       <div className="flex items-center gap-5">
         {NAV_ITEMS.map(({ label, view }) => (
