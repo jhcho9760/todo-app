@@ -4,11 +4,15 @@ import Link from 'next/link'
 import { useSearchParams, usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-const SUB_ITEMS = [
+const TODO_ITEMS = [
   { label: '오늘', view: 'today' },
   { label: '다음날', view: 'tomorrow' },
   { label: '주', view: 'week' },
   { label: '월', view: 'month' },
+]
+
+const DIARY_ITEMS = [
+  { label: '월간', href: '/diary' },
 ]
 
 export default function Sidebar() {
@@ -16,7 +20,9 @@ export default function Sidebar() {
   const pathname = usePathname()
   const currentView = searchParams.get('view')
   const isDashboard = pathname === '/' && !currentView
-  const [open, setOpen] = useState(true)
+  const isDiary = pathname.startsWith('/diary')
+  const [todoOpen, setTodoOpen] = useState(true)
+  const [diaryOpen, setDiaryOpen] = useState(true)
 
   return (
     <aside
@@ -47,30 +53,12 @@ export default function Sidebar() {
 
       <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '0 12px 12px' }} />
 
-      {/* 업무 To-Do 섹션 헤더 */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-2"
-      >
-        <span
-          className="font-semibold"
-          style={{ fontSize: '11px', color: '#7a7a7a', letterSpacing: '0.06em', textTransform: 'uppercase' }}
-        >
-          업무 To-Do
-        </span>
-        <svg
-          width="10" height="6" viewBox="0 0 10 6" fill="none"
-          style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s', color: '#7a7a7a' }}
-        >
-          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-
-      {/* 서브메뉴 */}
-      {open && (
-        <nav className="mt-1 flex flex-col gap-0.5 px-2">
-          {SUB_ITEMS.map(({ label, view }) => {
-            const active = currentView === view
+      {/* 업무 To-Do 섹션 */}
+      <SectionHeader label="업무 To-Do" open={todoOpen} onToggle={() => setTodoOpen(!todoOpen)} />
+      {todoOpen && (
+        <nav className="mt-1 flex flex-col gap-0.5 px-2 mb-3">
+          {TODO_ITEMS.map(({ label, view }) => {
+            const active = currentView === view && !isDiary
             return (
               <Link
                 key={view}
@@ -83,10 +71,37 @@ export default function Sidebar() {
                   backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
                 }}
               >
-                <span
-                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }}
-                />
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+      )}
+
+      <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '4px 12px 12px' }} />
+
+      {/* 데이트 달력 섹션 */}
+      <SectionHeader label="데이트 달력" open={diaryOpen} onToggle={() => setDiaryOpen(!diaryOpen)} />
+      {diaryOpen && (
+        <nav className="mt-1 flex flex-col gap-0.5 px-2">
+          {DIARY_ITEMS.map(({ label, href }) => {
+            const active = isDiary
+            return (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-2 px-3 py-2 rounded-[8px] transition-colors"
+                style={{
+                  fontSize: '14px',
+                  fontWeight: active ? 600 : 400,
+                  color: active ? '#0066cc' : '#1d1d1f',
+                  backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
                 {label}
               </Link>
             )
@@ -94,5 +109,19 @@ export default function Sidebar() {
         </nav>
       )}
     </aside>
+  )
+}
+
+function SectionHeader({ label, open, onToggle }: { label: string; open: boolean; onToggle: () => void }) {
+  return (
+    <button onClick={onToggle} className="w-full flex items-center justify-between px-4 py-2">
+      <span style={{ fontSize: '11px', fontWeight: 600, color: '#7a7a7a', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        {label}
+      </span>
+      <svg width="10" height="6" viewBox="0 0 10 6" fill="none"
+        style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s', color: '#7a7a7a' }}>
+        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
   )
 }
