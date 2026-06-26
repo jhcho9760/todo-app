@@ -25,10 +25,14 @@ export async function GET(request: NextRequest) {
       ...(completed !== null && { completed: completed === 'true' }),
       ...(noDate === 'true'
         ? { dueDate: null }
-        : {
-            ...(dateFrom && { dueDate: { gte: new Date(dateFrom + 'T00:00:00Z') } }),
-            ...(dateTo && { dueDate: { lte: new Date(dateTo + 'T23:59:59Z') } }),
-          }),
+        : (dateFrom || dateTo)
+          ? {
+              dueDate: {
+                ...(dateFrom && { gte: new Date(dateFrom + 'T00:00:00Z') }),
+                ...(dateTo && { lte: new Date(dateTo + 'T23:59:59Z') }),
+              },
+            }
+          : {}),
     },
     orderBy: { dueDate: 'asc' },
   })
