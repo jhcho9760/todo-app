@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import NavBar from '@/components/NavBar'
 import Sidebar from '@/components/Sidebar'
 import MobileTabBar from '@/components/MobileTabBar'
+import InstallPrompt from '@/components/InstallPrompt'
 import ThemeProvider from '@/components/ThemeProvider'
 import './globals.css'
 
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense fallback={null}>
             <MobileTabBar />
           </Suspense>
+          <InstallPrompt />
         </ThemeProvider>
       </body>
     </html>
