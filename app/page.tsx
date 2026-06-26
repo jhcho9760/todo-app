@@ -71,18 +71,21 @@ export default function Home() {
   const grouped = (priority: Priority) => todos.filter((t) => t.priority === priority)
 
   return (
-    <main className="max-w-3xl mx-auto px-4" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
-      {/* Page header */}
-      <div className="mb-8">
+    <main className="max-w-3xl mx-auto px-4" style={{ paddingBottom: "80px" }}>
+      {/* Dark header tile */}
+      <div
+        className="mx-[-16px] px-8 pt-12 pb-10 mb-8"
+        style={{ backgroundColor: "#1d1d1f" }}
+      >
         <h1
-          className="font-semibold tracking-[-0.28px]"
-          style={{ fontSize: "40px", lineHeight: "1.1", color: "#1d1d1f" }}
+          className="font-semibold"
+          style={{ fontSize: "40px", lineHeight: "1.1", letterSpacing: "-0.28px", color: "#ffffff" }}
         >
           할 일
         </h1>
         <p
           className="mt-2 font-normal"
-          style={{ fontSize: "17px", lineHeight: "1.47", letterSpacing: "-0.374px", color: "#7a7a7a" }}
+          style={{ fontSize: "17px", lineHeight: "1.47", letterSpacing: "-0.374px", color: "#2997ff" }}
         >
           {todos.filter(t => !t.completed).length}개 남음
         </p>
