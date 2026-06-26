@@ -37,4 +37,7 @@ export interface Filters {
   category: string
   priority: string
   completed: string
+  dateFrom: string
+  dateTo: string
+  noDate: string
 }

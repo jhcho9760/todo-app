@@ -4,10 +4,13 @@ import { CreateTodoInput } from '@/types/todo'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const search = searchParams.get('search') || ''
-  const category = searchParams.get('category') || ''
-  const priority = searchParams.get('priority') || ''
+  const search    = searchParams.get('search') || ''
+  const category  = searchParams.get('category') || ''
+  const priority  = searchParams.get('priority') || ''
   const completed = searchParams.get('completed')
+  const dateFrom  = searchParams.get('dateFrom')
+  const dateTo    = searchParams.get('dateTo')
+  const noDate    = searchParams.get('noDate')
 
   const todos = await prisma.todo.findMany({
     where: {
@@ -20,8 +23,14 @@ export async function GET(request: NextRequest) {
       ...(category && { category }),
       ...(priority && { priority }),
       ...(completed !== null && { completed: completed === 'true' }),
+      ...(noDate === 'true'
+        ? { dueDate: null }
+        : {
+            ...(dateFrom && { dueDate: { gte: new Date(dateFrom) } }),
+            ...(dateTo && { dueDate: { lte: new Date(dateTo + 'T23:59:59') } }),
+          }),
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { dueDate: 'asc' },
   })
 
   return NextResponse.json(
