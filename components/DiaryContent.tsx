@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { getMonthGrid, toDateStr, isToday } from '@/lib/calendar'
 import CalendarHeader from '@/components/CalendarHeader'
+
+const getDriveImageUrl = (fileId: string) =>
+  `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`
 
 const MOODS = [
   { value: 'great', emoji: '😊', label: '최고' },
@@ -18,7 +21,7 @@ const MOODS = [
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
 
 interface EntryMeta { date: string; mood: string | null }
-interface EntryFull { date: string; content: string; mood: string | null; updatedAt?: string }
+interface EntryFull { date: string; content: string; mood: string | null; photos: string[]; updatedAt?: string }
 
 export default function DiaryContent() {
   const searchParams = useSearchParams()
@@ -38,8 +41,12 @@ export default function DiaryContent() {
   const [entry, setEntry] = useState<EntryFull | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editMood, setEditMood] = useState<string | null>(null)
+  const [editPhotos, setEditPhotos] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const [dirty, setDirty] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const monthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`
 
@@ -59,6 +66,7 @@ export default function DiaryContent() {
         setEntry(data)
         setEditContent(data?.content ?? '')
         setEditMood(data?.mood ?? null)
+        setEditPhotos(data?.photos ?? [])
         setDirty(false)
       })
   }, [selectedDate])
@@ -74,7 +82,7 @@ export default function DiaryContent() {
     await fetch(`/api/diary/${selectedDate}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: editContent, mood: editMood }),
+      body: JSON.stringify({ content: editContent, mood: editMood, photos: editPhotos }),
     })
     setSaving(false)
     setDirty(false)
@@ -87,6 +95,44 @@ export default function DiaryContent() {
     setSelectedDate(null)
     router.replace('/diary', { scroll: false })
     fetchMetas()
+  }
+
+  const handlePhotoUpload = async (files: FileList) => {
+    setUploading(true)
+    const newIds: string[] = []
+    for (const file of Array.from(files)) {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch('/api/photos', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.fileId) newIds.push(data.fileId)
+    }
+    const updated = [...editPhotos, ...newIds]
+    setEditPhotos(updated)
+    setDirty(true)
+    setUploading(false)
+
+    // 즉시 저장
+    if (selectedDate) {
+      await fetch(`/api/diary/${selectedDate}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editContent, mood: editMood, photos: updated }),
+      })
+      fetchMetas()
+      setDirty(false)
+    }
+  }
+
+  const handlePhotoDelete = async (fileId: string) => {
+    await fetch('/api/photos', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileId }),
+    })
+    const updated = editPhotos.filter((id) => id !== fileId)
+    setEditPhotos(updated)
+    setDirty(true)
   }
 
   const hasEntry = (dateStr: string) => entryMetas.some((e) => e.date === dateStr)
@@ -209,7 +255,7 @@ export default function DiaryContent() {
             </div>
 
             {/* 기분 선택 */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 flex-wrap">
               {MOODS.map(({ value, emoji, label }) => (
                 <button
                   key={value}
@@ -237,9 +283,61 @@ export default function DiaryContent() {
                 lineHeight: '1.7',
                 color: 'var(--text-primary)',
                 backgroundColor: 'transparent',
-                minHeight: '280px',
+                minHeight: '200px',
               }}
             />
+
+            {/* 사진 영역 */}
+            <div className="mt-4">
+              {editPhotos.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  {editPhotos.map((fileId) => (
+                    <div key={fileId} className="relative group rounded-[10px] overflow-hidden" style={{ aspectRatio: '1' }}>
+                      <img
+                        src={getDriveImageUrl(fileId)}
+                        alt=""
+                        className="w-full h-full object-cover cursor-pointer"
+                        onClick={() => setLightboxPhoto(fileId)}
+                      />
+                      <button
+                        onClick={() => handlePhotoDelete(fileId)}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '14px' }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => e.target.files && handlePhotoUpload(e.target.files)}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="flex items-center gap-2 px-3 py-2 rounded-[8px] transition-colors"
+                style={{
+                  fontSize: '13px',
+                  color: uploading ? '#b0b0b5' : 'var(--text-secondary)',
+                  backgroundColor: 'var(--bg-hover)',
+                  border: '1px dashed var(--border)',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="17 8 12 3 7 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+                {uploading ? '업로드 중...' : '사진 추가'}
+              </button>
+            </div>
 
             {/* 저장/삭제 버튼 */}
             <div className="flex items-center justify-between mt-4 pt-4" style={{ borderTop: '1px solid var(--border-light)' }}>
@@ -268,6 +366,30 @@ export default function DiaryContent() {
           </div>
         )}
       </div>
+
+      {/* 사진 라이트박스 */}
+      {lightboxPhoto && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
+          onClick={() => setLightboxPhoto(null)}
+        >
+          <img
+            src={getDriveImageUrl(lightboxPhoto)}
+            alt=""
+            className="max-w-full max-h-full rounded-[12px]"
+            style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setLightboxPhoto(null)}
+            className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff', fontSize: '20px' }}
+          >
+            ×
+          </button>
+        </div>
+      )}
     </main>
   )
 }
