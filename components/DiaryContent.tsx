@@ -6,11 +6,11 @@ import { getMonthGrid, toDateStr, isToday } from '@/lib/calendar'
 import CalendarHeader from '@/components/CalendarHeader'
 
 const MOODS = [
-  { value: 'great', emoji: '😊', label: '최고' },
-  { value: 'good', emoji: '🙂', label: '좋음' },
-  { value: 'neutral', emoji: '😐', label: '보통' },
-  { value: 'bad', emoji: '😔', label: '나쁨' },
-  { value: 'awful', emoji: '😢', label: '최악' },
+  { value: 'awful', emoji: '💔', label: '최악' },
+  { value: 'bad', emoji: '🖤', label: '별로' },
+  { value: 'neutral', emoji: '🤍', label: '그냥' },
+  { value: 'good', emoji: '❤️', label: 'X' },
+  { value: 'great', emoji: '❤️‍🔥', label: 'O' },
 ]
 
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
