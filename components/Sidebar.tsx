@@ -45,7 +45,7 @@ export default function Sidebar() {
           style={{
             fontSize: '14px',
             fontWeight: isDashboard ? 600 : 400,
-            color: isDashboard ? '#0066cc' : '#1d1d1f',
+            color: isDashboard ? '#0066cc' : 'var(--text-primary)',
             backgroundColor: isDashboard ? 'rgba(0,102,204,0.1)' : 'transparent',
           }}
         >
