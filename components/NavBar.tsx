@@ -18,8 +18,13 @@ export default function NavBar() {
 
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between px-6"
-      style={{ backgroundColor: '#000000', height: '44px' }}
+      className="sticky top-0 z-50 flex items-end justify-between px-6"
+      style={{
+        backgroundColor: '#000000',
+        height: 'calc(44px + env(safe-area-inset-top))',
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: '0px',
+      }}
     >
       <Link href="/" className="font-normal tracking-[-0.12px]" style={{ fontSize: '12px', color: '#ffffff' }}>
         나윤&apos;s Board

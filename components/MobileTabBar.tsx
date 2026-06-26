@@ -87,11 +87,11 @@ export default function MobileTabBar() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-start justify-around px-2"
       style={{
         backgroundColor: 'var(--bg-card)',
         borderTop: '1px solid var(--border)',
-        height: '56px',
+        height: 'calc(56px + env(safe-area-inset-bottom))',
         paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
@@ -99,7 +99,7 @@ export default function MobileTabBar() {
         <Link
           key={tab.label}
           href={tab.href}
-          className="flex flex-col items-center gap-0.5 flex-1 py-1"
+          className="flex flex-col items-center gap-0.5 flex-1 pt-2"
           style={{ color: tab.active ? '#0066cc' : 'var(--text-secondary)' }}
         >
           {tab.icon}

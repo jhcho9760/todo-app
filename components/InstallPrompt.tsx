@@ -73,9 +73,7 @@ export default function InstallPrompt() {
         style={{
           backgroundColor: 'var(--bg-card)',
           borderTop: '1px solid var(--border)',
-          paddingBottom: `calc(0.75rem + env(safe-area-inset-bottom))`,
-          // 모바일 탭바가 있으면 그 위로
-          marginBottom: '56px',
+          bottom: 'calc(56px + env(safe-area-inset-bottom))',
         }}
       >
         {/* 앱 아이콘 */}
