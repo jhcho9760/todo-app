@@ -1,4 +1,5 @@
 import { google } from 'googleapis'
+import { Readable } from 'stream'
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
@@ -32,9 +33,7 @@ export async function uploadToDrive(
 ): Promise<string> {
   const drive = await getDriveClient()
 
-  const { PassThrough } = await import('stream')
-  const stream = new PassThrough()
-  stream.end(buffer)
+  const stream = Readable.from(buffer)
 
   const res = await drive.files.create({
     requestBody: { name: filename },
