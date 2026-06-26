@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
 
   const entries = await prisma.diaryEntry.findMany({
     where: month ? { date: { startsWith: month } } : undefined,
-    select: { date: true, mood: true },
+    select: { date: true, mood: true, content: true },
     orderBy: { date: 'desc' },
   })
 

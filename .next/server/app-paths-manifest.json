@@ -1,9 +1,10 @@
 {
-  "/api/diary/[date]/route": "app/api/diary/[date]/route.js",
+  "/api/config/route": "app/api/config/route.js",
   "/api/diary/route": "app/api/diary/route.js",
-  "/api/todos/[id]/route": "app/api/todos/[id]/route.js",
+  "/api/diary/[date]/route": "app/api/diary/[date]/route.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/api/todos/route": "app/api/todos/route.js",
-  "/diary/page": "app/diary/page.js",
-  "/page": "app/page.js"
+  "/api/todos/[id]/route": "app/api/todos/[id]/route.js",
+  "/page": "app/page.js",
+  "/diary/page": "app/diary/page.js"
 }

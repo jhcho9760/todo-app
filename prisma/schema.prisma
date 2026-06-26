@@ -7,6 +7,11 @@ datasource db {
   provider = "postgresql"
 }
 
+model AppConfig {
+  key   String @id
+  value String
+}
+
 model DiaryEntry {
   id        Int      @id @default(autoincrement())
   date      String   @unique
