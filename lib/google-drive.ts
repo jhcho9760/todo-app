@@ -13,7 +13,7 @@ export function getAuthUrl() {
   const oauth2Client = getOAuthClient()
   return oauth2Client.generateAuthUrl({
     access_type: 'offline',
-    scope: ['https://www.googleapis.com/auth/drive.file'],
+    scope: ['https://www.googleapis.com/auth/drive'],
     prompt: 'consent',
   })
 }
