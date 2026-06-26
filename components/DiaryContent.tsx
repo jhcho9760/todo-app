@@ -319,11 +319,12 @@ export default function DiaryContent() {
               {editPhotos.length > 0 && (
                 <div className="flex flex-col gap-3 mb-4">
                   {editPhotos.map((fileId) => (
-                    <div key={fileId} className="relative group rounded-[14px] overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                    <div key={fileId} className="relative group rounded-[14px] overflow-hidden">
                       <img
                         src={getDriveImageUrl(fileId)}
                         alt=""
-                        className="w-full h-full object-cover cursor-pointer"
+                        className="w-full cursor-pointer"
+                        style={{ display: 'block' }}
                         onClick={() => setLightboxPhoto(fileId)}
                       />
                       <button
