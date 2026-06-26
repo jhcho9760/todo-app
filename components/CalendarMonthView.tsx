@@ -40,19 +40,19 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
       {/* 요일 헤더 */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d) => (
-          <div key={d} className="text-center py-2 text-xs font-semibold" style={{ color: '#7a7a7a' }}>
+          <div key={d} className="text-center py-2 text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
             {d}
           </div>
         ))}
       </div>
 
       {/* 날짜 그리드 */}
-      <div className="overflow-hidden mb-4" style={{ border: '1px solid #e0e0e0', borderRadius: '18px' }}>
+      <div className="overflow-hidden mb-4" style={{ border: '1px solid var(--border)', borderRadius: '18px' }}>
         {grid.map((week, wi) => (
           <div
             key={wi}
             className="grid grid-cols-7"
-            style={{ borderBottom: wi < 5 ? '1px solid #f0f0f0' : 'none' }}
+            style={{ borderBottom: wi < 5 ? '1px solid var(--border-light)' : 'none' }}
           >
             {week.map((day) => {
               const dayTodos = todosForDay(day)
@@ -68,8 +68,8 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                   onClick={() => onDayClick(dateStr)}
                   className="p-2 text-left min-h-[80px]"
                   style={{
-                    backgroundColor: '#ffffff',
-                    borderRight: '1px solid #f0f0f0',
+                    backgroundColor: 'var(--bg-card)',
+                    borderRight: '1px solid var(--border-light)',
                   }}
                 >
                   <div className="mb-1">
@@ -77,7 +77,7 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                       className="w-6 h-6 rounded-full inline-flex items-center justify-center text-sm"
                       style={{
                         backgroundColor: today ? '#0066cc' : 'transparent',
-                        color: today ? '#ffffff' : currentMonth ? '#1d1d1f' : '#d2d2d7',
+                        color: today ? '#ffffff' : currentMonth ? 'var(--text-primary)' : '#d2d2d7',
                         fontWeight: today ? 600 : 400,
                       }}
                     >
@@ -90,8 +90,8 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
                         key={todo.id}
                         className="truncate text-xs px-1.5 py-0.5 rounded"
                         style={{
-                          backgroundColor: todo.completed ? '#f5f5f7' : 'rgba(0,102,204,0.08)',
-                          color: todo.completed ? '#7a7a7a' : '#0066cc',
+                          backgroundColor: todo.completed ? 'var(--bg-hover)' : 'rgba(0,102,204,0.08)',
+                          color: todo.completed ? 'var(--text-secondary)' : '#0066cc',
                         }}
                       >
                         {todo.title}
@@ -114,26 +114,26 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
         ))}
       </div>
 
-      {/* 날짜 미지정 섹션 */}
-      <div className="overflow-hidden" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0', borderRadius: '18px' }}>
+      {/* 날짜 미정 섹션 */}
+      <div className="overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px' }}>
         <button
           onClick={() => setShowNoDate(!showNoDate)}
           className="w-full flex items-center justify-between px-5 py-4"
         >
-          <span style={{ fontSize: '14px', fontWeight: 600, color: '#7a7a7a' }}>날짜 미지정</span>
-          <span style={{ fontSize: '14px', color: '#7a7a7a' }}>{noDateTodos.length}개 {showNoDate ? '▲' : '▼'}</span>
+          <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>날짜 미정</span>
+          <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{noDateTodos.length}개 {showNoDate ? '▲' : '▼'}</span>
         </button>
         {showNoDate && (
-          <div style={{ borderTop: '1px solid #f0f0f0' }}>
+          <div style={{ borderTop: '1px solid var(--border-light)' }}>
             {noDateTodos.length === 0 ? (
-              <p className="px-5 py-4" style={{ fontSize: '14px', color: '#7a7a7a' }}>없음</p>
+              <p className="px-5 py-4" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없음</p>
             ) : (
               <div className="px-5 py-3 space-y-1">
                 {noDateTodos.map((todo) => (
                   <div
                     key={todo.id}
                     className="text-sm px-3 py-2 rounded-lg"
-                    style={{ backgroundColor: '#f5f5f7', color: '#1d1d1f' }}
+                    style={{ backgroundColor: 'var(--bg-hover)', color: 'var(--text-primary)' }}
                   >
                     {todo.title}
                   </div>

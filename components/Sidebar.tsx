@@ -27,7 +27,7 @@ export default function Sidebar() {
   return (
     <aside
       className="sticky top-[44px] h-[calc(100vh-44px)] flex-shrink-0 overflow-y-auto pt-4 pb-8"
-      style={{ width: '200px', backgroundColor: '#f5f5f7', borderRight: '1px solid #e0e0e0' }}
+      style={{ width: '200px', backgroundColor: 'var(--bg-sidebar)', borderRight: '1px solid var(--border)' }}
     >
       {/* 대시보드 링크 */}
       <nav className="px-2 mb-3">
@@ -51,7 +51,7 @@ export default function Sidebar() {
         </Link>
       </nav>
 
-      <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '0 12px 12px' }} />
+      <div style={{ height: '1px', backgroundColor: 'var(--border)', margin: '0 12px 12px' }} />
 
       {/* 업무 To-Do 섹션 */}
       <SectionHeader label="업무 To-Do" open={todoOpen} onToggle={() => setTodoOpen(!todoOpen)} />
@@ -67,7 +67,7 @@ export default function Sidebar() {
                 style={{
                   fontSize: '14px',
                   fontWeight: active ? 600 : 400,
-                  color: active ? '#0066cc' : '#1d1d1f',
+                  color: active ? '#0066cc' : 'var(--text-primary)',
                   backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
                 }}
               >
@@ -96,7 +96,7 @@ export default function Sidebar() {
                 style={{
                   fontSize: '14px',
                   fontWeight: active ? 600 : 400,
-                  color: active ? '#0066cc' : '#1d1d1f',
+                  color: active ? '#0066cc' : 'var(--text-primary)',
                   backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
                 }}
               >

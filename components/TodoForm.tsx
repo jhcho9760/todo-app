@@ -19,14 +19,14 @@ const PRIORITY_LABELS: Record<Priority, string> = {
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
-  border: "1px solid #e0e0e0",
+  border: "1px solid var(--border)",
   borderRadius: "11px",
   padding: "10px 14px",
   fontSize: "17px",
   lineHeight: "1.47",
   letterSpacing: "-0.374px",
-  color: "#1d1d1f",
-  backgroundColor: "#ffffff",
+  color: "var(--text-primary)",
+  backgroundColor: "var(--input-bg)",
   outline: "none",
 }
 
@@ -63,8 +63,8 @@ export default function TodoForm({ onSubmit, initialValues, onCancel, initialDat
       onSubmit={handleSubmit}
       className="space-y-3"
       style={{
-        backgroundColor: "#ffffff",
-        border: "1px solid #e0e0e0",
+        backgroundColor: "var(--bg-card)",
+        border: "1px solid var(--border)",
         borderRadius: "18px",
         padding: "20px",
       }}

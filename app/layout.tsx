@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import NavBar from '@/components/NavBar'
 import Sidebar from '@/components/Sidebar'
+import ThemeProvider from '@/components/ThemeProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className="min-h-screen" style={{ backgroundColor: '#f5f5f7' }}>
+      <body className="min-h-screen theme-bg-page">
+        <ThemeProvider>
         <Suspense fallback={
           <nav
             className="sticky top-0 z-50 flex items-center px-6"
@@ -29,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
           <div className="flex-1 min-w-0">{children}</div>
         </div>
+        </ThemeProvider>
       </body>
     </html>
   )

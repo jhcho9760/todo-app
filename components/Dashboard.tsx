@@ -125,14 +125,14 @@ export default function Dashboard() {
 
   if (loading) return (
     <main className="px-8 py-10" style={{ maxWidth: '900px' }}>
-      <div style={{ color: '#7a7a7a', fontSize: '14px' }}>불러오는 중...</div>
+      <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>불러오는 중...</div>
     </main>
   )
 
   return (
     <main className="px-8 py-10" style={{ maxWidth: '960px', paddingBottom: '80px' }}>
       <div className="mb-8">
-        <p style={{ fontSize: '15px', color: '#7a7a7a', marginBottom: '6px' }}>{greeting}, 나윤님</p>
+        <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '6px' }}>{greeting}, 나윤님</p>
         <h1 className="font-semibold" style={{ fontSize: '34px', color: '#1d1d1f', letterSpacing: '-0.28px' }}>대시보드</h1>
       </div>
 
@@ -147,15 +147,15 @@ export default function Dashboard() {
 
         {/* 날씨 */}
         {weather && (
-          <div className="rounded-[18px] p-6 flex flex-col justify-between" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>
+          <div className="rounded-[18px] p-6 flex flex-col justify-between" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <div className="flex items-start justify-between">
               <div>
-                <p style={{ fontSize: '13px', color: '#7a7a7a', marginBottom: '8px' }}>{weather.city} 날씨</p>
-                <p className="font-semibold" style={{ fontSize: '40px', lineHeight: 1, color: '#1d1d1f' }}>{weather.temp}°</p>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{weather.city} 날씨</p>
+                <p className="font-semibold" style={{ fontSize: '40px', lineHeight: 1, color: 'var(--text-primary)' }}>{weather.temp}°</p>
               </div>
               <span style={{ fontSize: '40px', lineHeight: 1 }}>{weather.emoji}</span>
             </div>
-            <p style={{ fontSize: '14px', color: '#7a7a7a', marginTop: '8px' }}>{weather.label}</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>{weather.label}</p>
           </div>
         )}
 
@@ -199,20 +199,20 @@ export default function Dashboard() {
       {editingDate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
           <div className="rounded-[20px] p-8 w-80" style={{ backgroundColor: '#ffffff' }}>
-            <h2 className="font-semibold mb-2" style={{ fontSize: '20px', color: '#1d1d1f' }}>연애 시작일</h2>
-            <p style={{ fontSize: '14px', color: '#7a7a7a', marginBottom: '20px' }}>처음 만난 날을 입력해주세요 💕</p>
+            <h2 className="font-semibold mb-2" style={{ fontSize: '20px', color: 'var(--text-primary)' }}>연애 시작일</h2>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px' }}>처음 만난 날을 입력해주세요 💕</p>
             <input
               type="date"
               value={dateInput}
               onChange={(e) => setDateInput(e.target.value)}
               className="w-full rounded-[11px] px-4 py-3 mb-4"
-              style={{ border: '1px solid #e0e0e0', fontSize: '16px', color: '#1d1d1f' }}
+              style={{ border: '1px solid #e0e0e0', fontSize: '16px', color: 'var(--text-primary)' }}
             />
             <div className="flex gap-2">
               <button
                 onClick={() => setEditingDate(false)}
                 className="flex-1 py-3 rounded-full"
-                style={{ backgroundColor: '#f5f5f7', fontSize: '15px', color: '#1d1d1f' }}
+                style={{ backgroundColor: '#f5f5f7', fontSize: '15px', color: 'var(--text-primary)' }}
               >취소</button>
               <button
                 onClick={handleSaveStartDate}
@@ -233,9 +233,9 @@ export default function Dashboard() {
       </div>
 
       {total > 0 && (
-        <div className="rounded-[18px] p-6 mb-6" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>
+        <div className="rounded-[18px] p-6 mb-6" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-3">
-            <span style={{ fontSize: '15px', fontWeight: 600, color: '#1d1d1f' }}>전체 완료율</span>
+            <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>전체 완료율</span>
             <span style={{ fontSize: '15px', fontWeight: 600, color: '#0066cc' }}>{Math.round((completed / total) * 100)}%</span>
           </div>
           <div className="rounded-full overflow-hidden" style={{ height: '8px', backgroundColor: '#f0f0f0' }}>
@@ -246,65 +246,65 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* 오늘 할 일 */}
-        <div className="rounded-[18px] p-5" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 style={{ fontSize: '15px', fontWeight: 600, color: '#1d1d1f' }}>오늘 할 일</h2>
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>오늘 할 일</h2>
             <Link href={`/?view=today&date=${today}`} style={{ fontSize: '12px', color: '#0066cc' }}>전체 보기</Link>
           </div>
           {todayIncomplete.length === 0 ? (
-            <p style={{ fontSize: '14px', color: '#7a7a7a' }}>오늘 할 일이 없습니다 🎉</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>오늘 할 일이 없습니다 🎉</p>
           ) : (
             <div className="space-y-2">
               {todayIncomplete.slice(0, 5).map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLOR[todo.priority] }} />
-                  <span className="truncate" style={{ fontSize: '14px', color: '#1d1d1f' }}>{todo.title}</span>
+                  <span className="truncate" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                 </div>
               ))}
-              {todayIncomplete.length > 5 && <p style={{ fontSize: '12px', color: '#7a7a7a' }}>+{todayIncomplete.length - 5}개 더</p>}
+              {todayIncomplete.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{todayIncomplete.length - 5}개 더</p>}
             </div>
           )}
         </div>
 
         {/* 높은 우선순위 */}
-        <div className="rounded-[18px] p-5" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 style={{ fontSize: '15px', fontWeight: 600, color: '#1d1d1f' }}>높은 우선순위</h2>
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>높은 우선순위</h2>
             <span className="px-2 py-0.5 rounded-full" style={{ fontSize: '12px', color: '#ff3b30', backgroundColor: 'rgba(255,59,48,0.08)' }}>
               {highPriority.length}개
             </span>
           </div>
           {highPriority.length === 0 ? (
-            <p style={{ fontSize: '14px', color: '#7a7a7a' }}>없습니다 👍</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없습니다 👍</p>
           ) : (
             <div className="space-y-2">
               {highPriority.slice(0, 5).map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#ff3b30' }} />
                   <div className="min-w-0">
-                    <span className="truncate block" style={{ fontSize: '14px', color: '#1d1d1f' }}>{todo.title}</span>
+                    <span className="truncate block" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                     {todo.dueDate && (
-                      <span style={{ fontSize: '11px', color: '#7a7a7a' }}>
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                         {(() => { const [y, m, d] = todo.dueDate!.split('T')[0].split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) })()}
                       </span>
                     )}
                   </div>
                 </div>
               ))}
-              {highPriority.length > 5 && <p style={{ fontSize: '12px', color: '#7a7a7a' }}>+{highPriority.length - 5}개 더</p>}
+              {highPriority.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{highPriority.length - 5}개 더</p>}
             </div>
           )}
         </div>
       </div>
 
       {/* 최근 일기 */}
-      <div className="rounded-[18px] p-5 mb-6" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>
+      <div className="rounded-[18px] p-5 mb-6" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 style={{ fontSize: '15px', fontWeight: 600, color: '#1d1d1f' }}>최근 데이트 기록</h2>
+          <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>최근 데이트 기록</h2>
           <Link href="/diary" style={{ fontSize: '12px', color: '#ff6b9d' }}>달력 보기</Link>
         </div>
         {recentDiary.length === 0 ? (
-          <p style={{ fontSize: '14px', color: '#7a7a7a' }}>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             아직 기록이 없어요.{' '}
             <Link href="/diary" style={{ color: '#ff6b9d' }}>첫 일기를 써보세요 💕</Link>
           </p>
@@ -320,7 +320,7 @@ export default function Dashboard() {
                   className="flex items-center gap-3 py-2 rounded-[10px] px-3 transition-colors hover:bg-[#f5f5f7]"
                 >
                   <span style={{ fontSize: '20px' }}>{mood ? MOOD_EMOJI[mood] : '📝'}</span>
-                  <span style={{ fontSize: '14px', color: '#1d1d1f' }}>{dateLabel}</span>
+                  <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{dateLabel}</span>
                 </Link>
               )
             })}
@@ -330,7 +330,7 @@ export default function Dashboard() {
 
       {/* 빠른 이동 */}
       <div>
-        <h2 className="mb-3" style={{ fontSize: '13px', fontWeight: 600, color: '#7a7a7a', letterSpacing: '0.05em', textTransform: 'uppercase' }}>빠른 이동</h2>
+        <h2 className="mb-3" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>빠른 이동</h2>
         <div className="flex gap-3 flex-wrap">
           {[
             { label: '오늘', href: `/?view=today&date=${today}` },
@@ -352,8 +352,8 @@ export default function Dashboard() {
 
 function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="rounded-[18px] p-5" style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>
-      <p style={{ fontSize: '13px', color: '#7a7a7a', marginBottom: '8px' }}>{label}</p>
+    <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{label}</p>
       <p className="font-semibold" style={{ fontSize: '32px', color, letterSpacing: '-0.5px', lineHeight: 1 }}>
         {value}<span style={{ fontSize: '16px', fontWeight: 400, marginLeft: '2px' }}>개</span>
       </p>

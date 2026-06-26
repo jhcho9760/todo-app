@@ -112,27 +112,24 @@ export default function HomeContent() {
   }
 
   const headerTitle = view === 'today'
-    ? (dateParam ? new Date(dateParam).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) : '오늘')
+    ? (dateParam ? parseDateParam(dateParam).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) : '오늘')
     : view === 'tomorrow' ? '다음날'
     : view === 'week' ? '주간'
     : '월간'
 
   return (
     <main className="max-w-3xl mx-auto px-6" style={{ paddingBottom: '80px' }}>
-      {/* 다크 헤더 타일 */}
-      <div
-        className="mx-[-16px] px-8 pt-12 pb-10 mb-8"
-        style={{ backgroundColor: '#1d1d1f' }}
-      >
+      {/* 상단 헤더 */}
+      <div className="px-2 pt-10 pb-8 mb-6">
         <h1
           className="font-semibold"
-          style={{ fontSize: '40px', lineHeight: '1.1', letterSpacing: '-0.28px', color: '#ffffff' }}
+          style={{ fontSize: '34px', lineHeight: '1.1', letterSpacing: '-0.28px', color: 'var(--text-primary)' }}
         >
           {headerTitle}
         </h1>
         <p
           className="mt-2 font-normal"
-          style={{ fontSize: '17px', lineHeight: '1.47', letterSpacing: '-0.374px', color: '#2997ff' }}
+          style={{ fontSize: '15px', lineHeight: '1.47', letterSpacing: '-0.374px', color: '#0066cc' }}
         >
           {todos.filter((t) => !t.completed).length}개 남음
         </p>

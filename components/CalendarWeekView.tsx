@@ -60,7 +60,7 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
               <div className="text-center mb-2">
                 <div
                   className="text-xs mb-1"
-                  style={{ color: todayStyle ? '#0066cc' : '#7a7a7a', fontWeight: todayStyle ? 600 : 400 }}
+                  style={{ color: todayStyle ? '#0066cc' : 'var(--text-secondary)', fontWeight: todayStyle ? 600 : 400 }}
                 >
                   {DAY_LABELS[day.getDay()]}
                 </div>
@@ -68,7 +68,7 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
                   className="w-7 h-7 rounded-full flex items-center justify-center mx-auto text-sm font-semibold"
                   style={{
                     backgroundColor: todayStyle ? '#0066cc' : 'transparent',
-                    color: todayStyle ? '#ffffff' : '#1d1d1f',
+                    color: todayStyle ? '#ffffff' : 'var(--text-primary)',
                   }}
                 >
                   {day.getDate()}
@@ -77,15 +77,15 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
 
               <div
                 className="min-h-[80px] p-1 space-y-1"
-                style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0', borderRadius: '11px' }}
+                style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '11px' }}
               >
                 {dayTodos.map((todo) => (
                   <div
                     key={todo.id}
                     className="px-2 py-1 rounded text-xs truncate"
                     style={{
-                      backgroundColor: todo.completed ? '#f5f5f7' : 'rgba(0,102,204,0.08)',
-                      color: todo.completed ? '#7a7a7a' : '#0066cc',
+                      backgroundColor: todo.completed ? 'var(--bg-hover)' : 'rgba(0,102,204,0.08)',
+                      color: todo.completed ? 'var(--text-secondary)' : '#0066cc',
                       textDecoration: todo.completed ? 'line-through' : 'none',
                     }}
                   >
@@ -117,21 +117,21 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
 
       <div
         className="overflow-hidden"
-        style={{ backgroundColor: '#ffffff', border: '1px solid #e0e0e0', borderRadius: '18px' }}
+        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px' }}
       >
         <button
           onClick={() => setShowNoDate(!showNoDate)}
           className="w-full flex items-center justify-between px-5 py-4"
         >
-          <span style={{ fontSize: '14px', fontWeight: 600, color: '#7a7a7a' }}>날짜 미지정</span>
-          <span style={{ fontSize: '14px', color: '#7a7a7a' }}>
+          <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>날짜 미정</span>
+          <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             {noDateTodos.length}개 {showNoDate ? '▲' : '▼'}
           </span>
         </button>
         {showNoDate && (
-          <div className="divide-y" style={{ borderColor: '#f0f0f0', borderTop: '1px solid #f0f0f0' }}>
+          <div className="divide-y" style={{ borderColor: 'var(--border-light)', borderTop: '1px solid var(--border-light)' }}>
             {noDateTodos.length === 0 ? (
-              <p className="px-5 py-4" style={{ fontSize: '14px', color: '#7a7a7a' }}>없음</p>
+              <p className="px-5 py-4" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없음</p>
             ) : (
               noDateTodos.map((todo) => (
                 <TodoItem key={todo.id} todo={todo} onUpdate={onUpdate} onDelete={onDelete} />

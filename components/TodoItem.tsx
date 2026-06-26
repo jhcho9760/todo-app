@@ -40,7 +40,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
       className="flex items-start gap-3 px-5 py-4 group"
       style={{ opacity: todo.completed ? 0.5 : 1 }}
     >
-      {/* Custom checkbox */}
+      {/* 체크박스 */}
       <button
         onClick={() => onUpdate(todo.id, { completed: !todo.completed })}
         className="mt-[2px] shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-colors"
@@ -64,7 +64,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
               fontSize: "17px",
               lineHeight: "1.47",
               letterSpacing: "-0.374px",
-              color: todo.completed ? "#7a7a7a" : "#1d1d1f",
+              color: todo.completed ? "var(--text-secondary)" : "var(--text-primary)",
               textDecoration: todo.completed ? "line-through" : "none",
             }}
           >
@@ -75,7 +75,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
         {todo.description && (
           <p
             className="mt-1"
-            style={{ fontSize: "14px", lineHeight: "1.43", letterSpacing: "-0.224px", color: "#7a7a7a" }}
+            style={{ fontSize: "14px", lineHeight: "1.43", letterSpacing: "-0.224px", color: "var(--text-secondary)" }}
           >
             {todo.description}
           </p>
@@ -101,7 +101,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
           {todo.priority === 'LOW' && (
             <span
               className="px-3 py-0.5 rounded-full font-normal"
-              style={{ fontSize: "12px", color: "#7a7a7a", backgroundColor: "#f5f5f7" }}
+              style={{ fontSize: "12px", color: "var(--text-secondary)", backgroundColor: "var(--bg-hover)" }}
             >
               낮음
             </span>
@@ -109,7 +109,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
           {dueDate && (
             <span
               className="font-normal"
-              style={{ fontSize: "12px", color: "#7a7a7a", letterSpacing: "-0.12px" }}
+              style={{ fontSize: "12px", color: "var(--text-secondary)", letterSpacing: "-0.12px" }}
             >
               {dueDate}
             </span>
@@ -134,8 +134,8 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
               style={{
                 fontSize: "12px",
                 letterSpacing: "-0.12px",
-                color: "#7a7a7a",
-                backgroundColor: "#f5f5f7",
+                color: "var(--text-secondary)",
+                backgroundColor: "var(--bg-hover)",
               }}
             >
               #{tag}
