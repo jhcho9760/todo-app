@@ -34,8 +34,9 @@ export async function uploadToDrive(
 
   const folderId = await getOrCreateFolder(drive)
 
-  const { Readable } = await import('stream')
-  const stream = Readable.from(buffer)
+  const { PassThrough } = await import('stream')
+  const stream = new PassThrough()
+  stream.end(buffer)
 
   const res = await drive.files.create({
     requestBody: {
