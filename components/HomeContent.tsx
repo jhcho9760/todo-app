@@ -2,19 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { Todo, CreateTodoInput, UpdateTodoInput } from '@/types/todo'
 import { toDateStr } from '@/lib/calendar'
 import CalendarMonthView from '@/components/CalendarMonthView'
 import CalendarWeekView from '@/components/CalendarWeekView'
 import CalendarDayView from '@/components/CalendarDayView'
-
-const VIEW_TABS = [
-  { label: '오늘', view: 'today' },
-  { label: '다음날', view: 'tomorrow' },
-  { label: '주', view: 'week' },
-  { label: '월', view: 'month' },
-]
 
 type View = 'month' | 'week' | 'today' | 'tomorrow'
 
@@ -144,26 +136,6 @@ export default function HomeContent() {
         >
           {todos.filter((t) => !t.completed).length}개 남음
         </p>
-
-        {/* 뷰 탭 */}
-        <div className="flex gap-2 mt-6">
-          {VIEW_TABS.map(({ label, view: v }) => (
-            <Link
-              key={v}
-              href={`/?view=${v}`}
-              className="px-4 py-1.5 rounded-full font-normal transition-colors"
-              style={{
-                fontSize: '14px',
-                color: view === v ? '#ffffff' : 'rgba(255,255,255,0.5)',
-                backgroundColor: view === v ? 'rgba(255,255,255,0.2)' : 'transparent',
-                border: '1px solid',
-                borderColor: view === v ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)',
-              }}
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
       </div>
 
       {view === 'month' && (
