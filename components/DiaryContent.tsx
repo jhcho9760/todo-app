@@ -287,58 +287,6 @@ export default function DiaryContent() {
               }}
             />
 
-            {/* 사진 영역 */}
-            <div className="mt-4">
-              {editPhotos.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  {editPhotos.map((fileId) => (
-                    <div key={fileId} className="relative group rounded-[10px] overflow-hidden" style={{ aspectRatio: '1' }}>
-                      <img
-                        src={getDriveImageUrl(fileId)}
-                        alt=""
-                        className="w-full h-full object-cover cursor-pointer"
-                        onClick={() => setLightboxPhoto(fileId)}
-                      />
-                      <button
-                        onClick={() => handlePhotoDelete(fileId)}
-                        className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '14px' }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={(e) => e.target.files && handlePhotoUpload(e.target.files)}
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="flex items-center gap-2 px-3 py-2 rounded-[8px] transition-colors"
-                style={{
-                  fontSize: '13px',
-                  color: uploading ? '#b0b0b5' : 'var(--text-secondary)',
-                  backgroundColor: 'var(--bg-hover)',
-                  border: '1px dashed var(--border)',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polyline points="17 8 12 3 7 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                {uploading ? '업로드 중...' : '사진 추가'}
-              </button>
-            </div>
-
             {/* 저장/삭제 버튼 */}
             <div className="flex items-center justify-between mt-4 pt-4" style={{ borderTop: '1px solid var(--border-light)' }}>
               {entry ? (
@@ -367,6 +315,64 @@ export default function DiaryContent() {
         )}
       </div>
 
+      {/* 사진 섹션 */}
+      {selectedDate && (
+        <div className="mt-4 rounded-[18px] p-6" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p className="mb-4 font-semibold" style={{ fontSize: '15px', color: 'var(--text-primary)' }}>사진</p>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => e.target.files && handlePhotoUpload(e.target.files)}
+          />
+
+          {editPhotos.length > 0 && (
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+              {editPhotos.map((fileId) => (
+                <div key={fileId} className="relative group rounded-[12px] overflow-hidden" style={{ aspectRatio: '1' }}>
+                  <img
+                    src={getDriveImageUrl(fileId)}
+                    alt=""
+                    className="w-full h-full object-cover cursor-pointer"
+                    style={{ imageOrientation: 'from-image' }}
+                    onClick={() => setLightboxPhoto(fileId)}
+                  />
+                  <button
+                    onClick={() => handlePhotoDelete(fileId)}
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '14px' }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-[10px] transition-colors"
+            style={{
+              fontSize: '14px',
+              color: uploading ? '#b0b0b5' : 'var(--text-secondary)',
+              backgroundColor: 'var(--bg-hover)',
+              border: '1px dashed var(--border)',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="17 8 12 3 7 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            {uploading ? '업로드 중...' : '사진 추가'}
+          </button>
+        </div>
+      )}
+
       {/* 사진 라이트박스 */}
       {lightboxPhoto && (
         <div
@@ -378,7 +384,7 @@ export default function DiaryContent() {
             src={getDriveImageUrl(lightboxPhoto)}
             alt=""
             className="max-w-full max-h-full rounded-[12px]"
-            style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }}
+            style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', imageOrientation: 'from-image' }}
             onClick={(e) => e.stopPropagation()}
           />
           <button
