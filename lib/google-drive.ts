@@ -32,12 +32,15 @@ export async function uploadToDrive(
   mimeType: string
 ): Promise<string> {
   const drive = await getDriveClient()
-  const folderId = await getOrCreateFolder(drive)
+  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
 
   const stream = Readable.from(buffer)
 
   const res = await drive.files.create({
-    requestBody: { name: filename, parents: [folderId] },
+    requestBody: {
+      name: filename,
+      ...(folderId ? { parents: [folderId] } : {}),
+    },
     media: { mimeType, body: stream },
     fields: 'id',
   })
