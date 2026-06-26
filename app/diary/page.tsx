@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import DiaryFeed from '@/components/DiaryFeed'
+import DiaryContent from '@/components/DiaryContent'
 
 export default function DiaryPage() {
   return (
@@ -8,7 +8,7 @@ export default function DiaryPage() {
         <div style={{ color: '#7a7a7a', fontSize: '14px' }}>불러오는 중...</div>
       </main>
     }>
-      <DiaryFeed />
+      <DiaryContent />
     </Suspense>
   )
 }
