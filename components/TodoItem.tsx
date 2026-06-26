@@ -79,6 +79,30 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
         )}
 
         <div className="flex items-center gap-2 mt-2 flex-wrap">
+          {todo.priority === 'HIGH' && (
+            <span
+              className="px-3 py-0.5 rounded-full font-normal"
+              style={{ fontSize: "12px", color: "#ff3b30", backgroundColor: "rgba(255,59,48,0.08)" }}
+            >
+              높음
+            </span>
+          )}
+          {todo.priority === 'MEDIUM' && (
+            <span
+              className="px-3 py-0.5 rounded-full font-normal"
+              style={{ fontSize: "12px", color: "#ff9500", backgroundColor: "rgba(255,149,0,0.08)" }}
+            >
+              중간
+            </span>
+          )}
+          {todo.priority === 'LOW' && (
+            <span
+              className="px-3 py-0.5 rounded-full font-normal"
+              style={{ fontSize: "12px", color: "#7a7a7a", backgroundColor: "#f5f5f7" }}
+            >
+              낮음
+            </span>
+          )}
           {dueDate && (
             <span
               className="font-normal"
