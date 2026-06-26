@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       ...(noDate === 'true'
         ? { dueDate: null }
         : {
-            ...(dateFrom && { dueDate: { gte: new Date(dateFrom) } }),
-            ...(dateTo && { dueDate: { lte: new Date(dateTo + 'T23:59:59') } }),
+            ...(dateFrom && { dueDate: { gte: new Date(dateFrom + 'T00:00:00Z') } }),
+            ...(dateTo && { dueDate: { lte: new Date(dateTo + 'T23:59:59Z') } }),
           }),
     },
     orderBy: { dueDate: 'asc' },
