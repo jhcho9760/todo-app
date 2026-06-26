@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #1d1d1f;
+  }
+
+  h1, h2, h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  }
+}
+
+@layer utilities {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-[22px] py-[11px] rounded-full text-[17px] font-normal leading-[1.47] tracking-[-0.374px] text-white transition-transform active:scale-95;
+    background-color: #0066cc;
+  }
+  .btn-primary:hover {
+    background-color: #0071e3;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-[22px] py-[11px] rounded-full text-[17px] font-normal leading-[1.47] tracking-[-0.374px] transition-transform active:scale-95;
+    color: #0066cc;
+    border: 1px solid #0066cc;
+  }
+  .apple-input {
+    @apply w-full border rounded-lg px-3 py-2 text-[17px] leading-[1.47] tracking-[-0.374px] focus:outline-none transition-colors;
+    border-color: #e0e0e0;
+    color: #1d1d1f;
+    background: #ffffff;
+  }
+  .apple-input:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15);
+  }
+}

@@ -16,6 +16,19 @@ const PRIORITY_LABELS: Record<Priority, string> = {
   HIGH: '높음',
 }
 
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  border: "1px solid #e0e0e0",
+  borderRadius: "11px",
+  padding: "10px 14px",
+  fontSize: "17px",
+  lineHeight: "1.47",
+  letterSpacing: "-0.374px",
+  color: "#1d1d1f",
+  backgroundColor: "#ffffff",
+  outline: "none",
+}
+
 export default function TodoForm({ onSubmit, initialValues, onCancel }: Props) {
   const [title, setTitle] = useState(initialValues?.title ?? '')
   const [description, setDescription] = useState(initialValues?.description ?? '')
@@ -43,27 +56,36 @@ export default function TodoForm({ onSubmit, initialValues, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 bg-white border rounded-lg p-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-3"
+      style={{
+        backgroundColor: "#ffffff",
+        border: "1px solid #e0e0e0",
+        borderRadius: "18px",
+        padding: "20px",
+      }}
+    >
       <input
         type="text"
-        placeholder="할 일 제목 *"
+        placeholder="할 일 제목"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        style={inputStyle}
         required
       />
       <textarea
         placeholder="설명 (선택)"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        style={{ ...inputStyle, resize: "none" }}
         rows={2}
       />
       <div className="flex gap-2 flex-wrap">
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value as Priority)}
-          className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{ ...inputStyle, width: "auto" }}
         >
           {PRIORITIES.map((p) => (
             <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
@@ -73,14 +95,14 @@ export default function TodoForm({ onSubmit, initialValues, onCancel }: Props) {
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{ ...inputStyle, width: "auto" }}
         />
         <input
           type="text"
           placeholder="카테고리"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
+          style={{ ...inputStyle, flex: "1", minWidth: "120px" }}
         />
       </div>
       <input
@@ -88,23 +110,25 @@ export default function TodoForm({ onSubmit, initialValues, onCancel }: Props) {
         placeholder="태그 (쉼표로 구분: work, urgent)"
         value={tagInput}
         onChange={(e) => setTagInput(e.target.value)}
-        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        style={inputStyle}
       />
-      <div className="flex gap-2 justify-end">
+      <div className="flex gap-2 justify-end pt-1">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-sm border rounded hover:bg-gray-50"
+            className="btn-ghost text-[14px] px-[18px] py-[8px] active:scale-95 transition-transform"
+            style={{ fontSize: "14px", padding: "8px 18px" }}
           >
             취소
           </button>
         )}
         <button
           type="submit"
-          className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="btn-primary active:scale-95 transition-transform"
+          style={{ fontSize: "14px", padding: "8px 18px" }}
         >
-          {initialValues ? '수정' : '추가'}
+          {initialValues ? '수정 완료' : '추가'}
         </button>
       </div>
     </form>

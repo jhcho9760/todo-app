@@ -13,10 +13,10 @@ const DEFAULT_FILTERS: Filters = {
   completed: '',
 }
 
-const PRIORITY_GROUPS: { priority: Priority; label: string; color: string; dot: string }[] = [
-  { priority: 'HIGH',   label: '높음', color: 'border-red-200 bg-red-50',    dot: '🔴' },
-  { priority: 'MEDIUM', label: '중간', color: 'border-yellow-200 bg-yellow-50', dot: '🟡' },
-  { priority: 'LOW',    label: '낮음', color: 'border-green-200 bg-green-50',  dot: '🟢' },
+const PRIORITY_GROUPS: { priority: Priority; label: string; dot: string }[] = [
+  { priority: 'HIGH',   label: '높음', dot: '#ff3b30' },
+  { priority: 'MEDIUM', label: '중간', dot: '#ff9500' },
+  { priority: 'LOW',    label: '낮음', dot: '#34c759' },
 ]
 
 export default function Home() {
@@ -71,8 +71,22 @@ export default function Home() {
   const grouped = (priority: Priority) => todos.filter((t) => t.priority === priority)
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">📋 To-Do Board</h1>
+    <main className="max-w-3xl mx-auto px-4" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
+      {/* Page header */}
+      <div className="mb-8">
+        <h1
+          className="font-semibold tracking-[-0.28px]"
+          style={{ fontSize: "40px", lineHeight: "1.1", color: "#1d1d1f" }}
+        >
+          할 일
+        </h1>
+        <p
+          className="mt-2 font-normal"
+          style={{ fontSize: "17px", lineHeight: "1.47", letterSpacing: "-0.374px", color: "#7a7a7a" }}
+        >
+          {todos.filter(t => !t.completed).length}개 남음
+        </p>
+      </div>
 
       <div className="space-y-4">
         <FilterBar filters={filters} onChange={setFilters} categories={categories} />
@@ -82,29 +96,68 @@ export default function Home() {
         ) : (
           <button
             onClick={() => setShowForm(true)}
-            className="w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors"
+            className="w-full rounded-[18px] py-4 text-[17px] font-normal leading-[1.47] tracking-[-0.374px] transition-transform active:scale-95"
+            style={{
+              border: "1px dashed #e0e0e0",
+              color: "#0066cc",
+              backgroundColor: "#ffffff",
+            }}
           >
             + 새 할 일 추가
           </button>
         )}
 
         {loading ? (
-          <p className="text-center text-gray-400 py-8">불러오는 중...</p>
+          <p
+            className="text-center py-12"
+            style={{ fontSize: "17px", color: "#7a7a7a" }}
+          >
+            불러오는 중...
+          </p>
         ) : (
           <div className="space-y-4">
-            {PRIORITY_GROUPS.map(({ priority, label, color, dot }) => {
+            {PRIORITY_GROUPS.map(({ priority, label, dot }) => {
               const items = grouped(priority)
               return (
-                <div key={priority} className={`border rounded-xl overflow-hidden ${color}`}>
-                  <div className="flex items-center gap-2 px-4 py-3 font-semibold text-sm">
-                    <span>{dot}</span>
-                    <span>{label}</span>
-                    <span className="ml-auto text-xs font-normal text-gray-500">{items.length}개</span>
+                <div
+                  key={priority}
+                  className="overflow-hidden"
+                  style={{
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e0e0e0",
+                    borderRadius: "18px",
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-2 px-5 py-4"
+                    style={{ borderBottom: items.length > 0 ? "1px solid #f0f0f0" : undefined }}
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ backgroundColor: dot }}
+                    />
+                    <span
+                      className="font-semibold"
+                      style={{ fontSize: "14px", lineHeight: "1.29", letterSpacing: "-0.224px", color: "#1d1d1f" }}
+                    >
+                      {label}
+                    </span>
+                    <span
+                      className="ml-auto"
+                      style={{ fontSize: "14px", color: "#7a7a7a" }}
+                    >
+                      {items.length}
+                    </span>
                   </div>
                   {items.length === 0 ? (
-                    <p className="text-xs text-gray-400 px-4 pb-3">없음</p>
+                    <p
+                      className="px-5 py-4"
+                      style={{ fontSize: "14px", color: "#7a7a7a" }}
+                    >
+                      없음
+                    </p>
                   ) : (
-                    <div className="px-3 pb-3 space-y-2">
+                    <div className="divide-y" style={{ borderColor: "#f0f0f0" }}>
                       {items.map((todo) => (
                         <TodoItem
                           key={todo.id}
