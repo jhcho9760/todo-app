@@ -227,7 +227,7 @@ export default function Dashboard() {
 
       {/* 업무 통계 */}
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
-        <StatCard label="전체 할 일" value={total} color="#1d1d1f" />
+        <StatCard label="전체 할 일" value={total} color="var(--text-primary)" />
         <StatCard label="미완료" value={incomplete} color="#ff3b30" />
         <StatCard label="완료" value={completed} color="#34c759" />
       </div>
