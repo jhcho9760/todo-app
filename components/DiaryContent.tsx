@@ -21,7 +21,7 @@ const MOODS = [
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
 
 interface EntryMeta { date: string; mood: string | null }
-interface EntryFull { date: string; content: string; mood: string | null; photos: string[]; updatedAt?: string }
+interface EntryFull { date: string; title: string; content: string; mood: string | null; photos: string[]; updatedAt?: string }
 
 export default function DiaryContent() {
   const searchParams = useSearchParams()
@@ -39,6 +39,7 @@ export default function DiaryContent() {
   const [entryMetas, setEntryMetas] = useState<EntryMeta[]>([])
   const [selectedDate, setSelectedDate] = useState<string | null>(dateParam)
   const [entry, setEntry] = useState<EntryFull | null>(null)
+  const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
   const [editMood, setEditMood] = useState<string | null>(null)
   const [editPhotos, setEditPhotos] = useState<string[]>([])
@@ -64,6 +65,7 @@ export default function DiaryContent() {
       .then((r) => r.json())
       .then((data) => {
         setEntry(data)
+        setEditTitle(data?.title ?? '')
         setEditContent(data?.content ?? '')
         setEditMood(data?.mood ?? null)
         setEditPhotos(data?.photos ?? [])
@@ -82,7 +84,7 @@ export default function DiaryContent() {
     await fetch(`/api/diary/${selectedDate}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: editContent, mood: editMood, photos: editPhotos }),
+      body: JSON.stringify({ title: editTitle, content: editContent, mood: editMood, photos: editPhotos }),
     })
     setSaving(false)
     setDirty(false)
@@ -117,7 +119,7 @@ export default function DiaryContent() {
       await fetch(`/api/diary/${selectedDate}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: editContent, mood: editMood, photos: updated }),
+        body: JSON.stringify({ title: editTitle, content: editContent, mood: editMood, photos: updated }),
       })
       fetchMetas()
       setDirty(false)
@@ -254,6 +256,22 @@ export default function DiaryContent() {
               </button>
             </div>
 
+            {/* 제목 입력 */}
+            <input
+              value={editTitle}
+              onChange={(e) => { setEditTitle(e.target.value); setDirty(true) }}
+              placeholder="제목"
+              className="w-full outline-none mb-3"
+              style={{
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid var(--border-light)',
+                paddingBottom: '10px',
+              }}
+            />
+
             {/* 기분 선택 */}
             <div className="flex gap-2 mb-4 flex-wrap">
               {MOODS.map(({ value, emoji, label }) => (
@@ -330,9 +348,9 @@ export default function DiaryContent() {
           />
 
           {editPhotos.length > 0 && (
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
               {editPhotos.map((fileId) => (
-                <div key={fileId} className="relative group rounded-[12px] overflow-hidden" style={{ aspectRatio: '1' }}>
+                <div key={fileId} className="relative group rounded-[12px] overflow-hidden" style={{ aspectRatio: '4/3' }}>
                   <img
                     src={getDriveImageUrl(fileId)}
                     alt=""

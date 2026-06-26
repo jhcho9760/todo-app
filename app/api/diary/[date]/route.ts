@@ -10,18 +10,19 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ date: 
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ date: string }> }) {
   const { date } = await params
-  const { content, mood, photos } = await request.json()
+  const { title, content, mood, photos } = await request.json()
 
   const photosJson = photos !== undefined ? JSON.stringify(photos) : undefined
 
   const entry = await prisma.diaryEntry.upsert({
     where: { date },
     update: {
+      title: title ?? '',
       content: content ?? '',
       mood: mood ?? null,
       ...(photosJson !== undefined && { photos: photosJson }),
     },
-    create: { date, content: content ?? '', mood: mood ?? null, photos: photosJson ?? '[]' },
+    create: { date, title: title ?? '', content: content ?? '', mood: mood ?? null, photos: photosJson ?? '[]' },
   })
 
   return NextResponse.json({ ...entry, photos: JSON.parse(entry.photos) })
