@@ -7,14 +7,34 @@ import ThemeProvider from '@/components/ThemeProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: '나윤\'s Board',
-  description: '공용 To-Do 보드',
-  viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
+  title: "나윤's Board",
+  description: '할 일과 데이트 달력을 한곳에서',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: "나윤's Board",
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+  },
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#000000',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
+      <head>
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+      </head>
       <body className="min-h-screen theme-bg-page">
         <ThemeProvider>
           <Suspense fallback={
@@ -28,13 +48,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NavBar />
           </Suspense>
           <div className="flex">
-            {/* 사이드바: 모바일 숨김, md 이상 표시 */}
             <Suspense fallback={<aside className="hidden md:block" style={{ width: '200px', flexShrink: 0 }} />}>
               <Sidebar />
             </Suspense>
             <div className="flex-1 min-w-0">{children}</div>
           </div>
-          {/* 하단 탭바: 모바일 전용 */}
           <Suspense fallback={null}>
             <MobileTabBar />
           </Suspense>
