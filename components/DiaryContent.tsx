@@ -242,7 +242,7 @@ export default function DiaryContent() {
         {/* 에디터 */}
         {selectedDate && (
           <div
-            className="rounded-[18px] p-6 flex flex-col"
+            className="hidden md:flex rounded-[18px] p-6 flex-col"
             style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', minHeight: '500px' }}
           >
             <div className="flex items-start justify-between mb-4">
