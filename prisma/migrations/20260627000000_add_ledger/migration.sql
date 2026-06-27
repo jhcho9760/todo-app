@@ -1,0 +1,9 @@
+CREATE TABLE "LedgerEntry" (
+  "id" SERIAL PRIMARY KEY,
+  "date" TEXT NOT NULL,
+  "label" TEXT NOT NULL,
+  "amount" INTEGER NOT NULL,
+  "category" TEXT NOT NULL,
+  "paidBy" TEXT NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
