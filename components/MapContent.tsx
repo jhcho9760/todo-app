@@ -5,20 +5,20 @@ import Script from 'next/script'
 
 declare global {
   interface Window {
-    Tmap: {
-      Map: new (options: { div: string; zoom: number; center: { lat: number; lng: number } }) => TmapMapInstance
-      Marker: new (options: { position: { lat: number; lng: number }; map: TmapMapInstance; iconHTML?: string }) => TmapMarkerInstance
+    Tmapv2: {
+      Map: new (elementId: string, options: object) => TmapMapInstance
+      Marker: new (options: object) => TmapMarkerInstance
+      LatLng: new (lat: number, lng: number) => TmapLatLng
+      event: {
+        addListener: (target: object, event: string, cb: (e: TmapEvent) => void) => void
+      }
     }
   }
 }
-interface TmapMapInstance {
-  on: (event: string, cb: (e: { latlng: { lat: () => number; lng: () => number } }) => void) => void
-  setCenter: (c: { lat: number; lng: number }) => void
-}
-interface TmapMarkerInstance {
-  setMap: (map: TmapMapInstance | null) => void
-  on: (event: string, cb: () => void) => void
-}
+interface TmapLatLng { lat: () => number; lng: () => number }
+interface TmapEvent { latLng: TmapLatLng }
+interface TmapMapInstance { setCenter: (c: TmapLatLng) => void }
+interface TmapMarkerInstance { setMap: (map: TmapMapInstance | null) => void }
 
 interface DatePlace { id: number; name: string; lat: number; lng: number; memo: string; visitedAt: string | null }
 interface SearchResult { name: string; lat: number; lng: number; address: string }
@@ -50,45 +50,64 @@ export default function MapContent() {
 
   useEffect(() => { fetchPlaces() }, [fetchPlaces])
 
-  const initMap = useCallback(() => {
-    if (!window.Tmap || mapRef.current) return
-    const map = new window.Tmap.Map({
-      div: 'tmap',
-      zoom: 13,
-      center: { lat: 37.5665, lng: 126.978 },
-    })
-    mapRef.current = map
-
-    map.on('click', (e) => {
-      const lat = e.latlng.lat()
-      const lng = e.latlng.lng()
-      previewMarkerRef.current?.setMap(null)
-      const marker = new window.Tmap.Marker({ position: { lat, lng }, map })
-      previewMarkerRef.current = marker
-      setPanel({ type: 'add', lat, lng })
-      setForm({ name: '', memo: '', visitedAt: '' })
-      setResults([])
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!mapRef.current || places.length === 0) return
+  const addSavedMarkers = useCallback((currentPlaces: DatePlace[]) => {
+    if (!mapRef.current || !window.Tmapv2) return
     markersRef.current.forEach((m) => m.setMap(null))
     markersRef.current.clear()
-    places.forEach((p) => {
+    currentPlaces.forEach((p) => {
       if (!mapRef.current) return
-      const marker = new window.Tmap.Marker({
-        position: { lat: p.lat, lng: p.lng },
+      const marker = new window.Tmapv2.Marker({
+        position: new window.Tmapv2.LatLng(p.lat, p.lng),
         map: mapRef.current,
         iconHTML: `<div style="background:#0066cc;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,102,0.3)">📍</div>`,
       })
-      marker.on('click', () => {
+      window.Tmapv2.event.addListener(marker, 'click', () => {
         setPanel({ type: 'view', place: p })
         setResults([])
       })
       markersRef.current.set(p.id, marker)
     })
-  }, [places])
+  }, [])
+
+  const initMap = useCallback(() => {
+    if (!window.Tmapv2 || mapRef.current) return
+    const map = new window.Tmapv2.Map('tmap', {
+      center: new window.Tmapv2.LatLng(37.5665, 126.978),
+      zoom: 13,
+      width: '100%',
+      height: '100%',
+    })
+    mapRef.current = map
+
+    window.Tmapv2.event.addListener(map, 'click', (e: TmapEvent) => {
+      const lat = e.latLng.lat()
+      const lng = e.latLng.lng()
+      previewMarkerRef.current?.setMap(null)
+      const marker = new window.Tmapv2.Marker({
+        position: new window.Tmapv2.LatLng(lat, lng),
+        map,
+      })
+      previewMarkerRef.current = marker
+      setPanel({ type: 'add', lat, lng })
+      setForm({ name: '', memo: '', visitedAt: '' })
+      setResults([])
+    })
+
+    // 지도 초기화 후 저장된 장소 핀 표시
+    fetch('/api/places')
+      .then((r) => r.json())
+      .then((data: DatePlace[]) => {
+        setPlaces(data)
+        addSavedMarkers(data)
+      })
+  }, [addSavedMarkers])
+
+  // places 업데이트 시 핀 재렌더링 (지도가 이미 초기화된 경우)
+  useEffect(() => {
+    if (mapRef.current && places.length > 0) {
+      addSavedMarkers(places)
+    }
+  }, [places, addSavedMarkers])
 
   const handleSearch = async () => {
     if (!query.trim()) return
@@ -99,10 +118,13 @@ export default function MapContent() {
   }
 
   const handleSelectResult = (r: SearchResult) => {
-    mapRef.current?.setCenter({ lat: r.lat, lng: r.lng })
-    previewMarkerRef.current?.setMap(null)
-    if (mapRef.current) {
-      const marker = new window.Tmap.Marker({ position: { lat: r.lat, lng: r.lng }, map: mapRef.current })
+    if (mapRef.current && window.Tmapv2) {
+      mapRef.current.setCenter(new window.Tmapv2.LatLng(r.lat, r.lng))
+      previewMarkerRef.current?.setMap(null)
+      const marker = new window.Tmapv2.Marker({
+        position: new window.Tmapv2.LatLng(r.lat, r.lng),
+        map: mapRef.current,
+      })
       previewMarkerRef.current = marker
     }
     setPanel({ type: 'add', lat: r.lat, lng: r.lng })
@@ -177,7 +199,7 @@ export default function MapContent() {
 
       <div style={{ position: 'relative', height: 'calc(100vh - 44px - env(safe-area-inset-top))', overflow: 'hidden' }}>
         {/* 검색창 */}
-        <div className="absolute top-3 left-3 right-3 z-10 flex gap-2" style={{ zIndex: 10 }}>
+        <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px' }}>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -197,15 +219,13 @@ export default function MapContent() {
         {/* 검색 결과 드롭다운 */}
         {results.length > 0 && (
           <div
-            className="absolute left-3 right-3"
-            style={{ top: '56px', zIndex: 10, backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}
+            style={{ position: 'absolute', top: '56px', left: '12px', right: '12px', zIndex: 10, backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}
           >
             {results.map((r, i) => (
               <button
                 key={i}
                 onClick={() => handleSelectResult(r)}
-                className="w-full text-left"
-                style={{ padding: '12px 16px', borderBottom: i < results.length - 1 ? '1px solid var(--border)' : 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'block' }}
+                style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderBottom: i < results.length - 1 ? '1px solid var(--border)' : 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'block' }}
               >
                 <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>{r.name}</p>
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', marginBottom: 0 }}>{r.address}</p>
@@ -220,8 +240,7 @@ export default function MapContent() {
         {/* 패널 */}
         {panel && (
           <div
-            className="absolute bottom-0 left-0 right-0"
-            style={{ backgroundColor: 'var(--bg-card)', borderRadius: '20px 20px 0 0', boxShadow: '0 -4px 20px rgba(0,0,0,0.12)', maxHeight: '60vh', overflowY: 'auto', zIndex: 10, padding: '20px' }}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'var(--bg-card)', borderRadius: '20px 20px 0 0', boxShadow: '0 -4px 20px rgba(0,0,0,0.12)', maxHeight: '60vh', overflowY: 'auto', zIndex: 10, padding: '20px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <p style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
@@ -239,18 +258,8 @@ export default function MapContent() {
                   <p style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.6, margin: 0 }}>{panel.place.memo}</p>
                 )}
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                  <button
-                    onClick={() => openEdit(panel.place)}
-                    style={{ flex: 1, padding: '8px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none', cursor: 'pointer' }}
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => handleDelete(panel.place.id)}
-                    style={{ flex: 1, padding: '8px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: 'rgba(255,59,48,0.1)', color: '#ff3b30', border: 'none', cursor: 'pointer' }}
-                  >
-                    삭제
-                  </button>
+                  <button onClick={() => openEdit(panel.place)} style={{ flex: 1, padding: '8px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none', cursor: 'pointer' }}>수정</button>
+                  <button onClick={() => handleDelete(panel.place.id)} style={{ flex: 1, padding: '8px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: 'rgba(255,59,48,0.1)', color: '#ff3b30', border: 'none', cursor: 'pointer' }}>삭제</button>
                 </div>
               </div>
             )}
@@ -263,18 +272,7 @@ export default function MapContent() {
                 <button
                   onClick={panel.type === 'add' ? handleAdd : handleEditSave}
                   disabled={saving || !form.name}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    borderRadius: '100px',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    backgroundColor: form.name ? '#0066cc' : 'var(--bg-hover)',
-                    color: form.name ? '#fff' : '#b0b0b5',
-                    border: 'none',
-                    cursor: form.name ? 'pointer' : 'default',
-                    marginTop: '4px',
-                  }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: form.name ? '#0066cc' : 'var(--bg-hover)', color: form.name ? '#fff' : '#b0b0b5', border: 'none', cursor: form.name ? 'pointer' : 'default', marginTop: '4px' }}
                 >
                   {saving ? '저장 중...' : '저장'}
                 </button>
