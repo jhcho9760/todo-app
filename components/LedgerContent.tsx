@@ -25,6 +25,7 @@ export default function LedgerContent() {
   })
 
   const [dayTotals, setDayTotals] = useState<DayTotal[]>([])
+  const [byPerson, setByPerson] = useState<Record<string, number>>({})
   const [selectedDate, setSelectedDate] = useState<string | null>(dateParam)
   const [entries, setEntries] = useState<LedgerEntry[]>([])
   const [names, setNames] = useState<[string, string]>(['', ''])
@@ -37,7 +38,9 @@ export default function LedgerContent() {
 
   const fetchMonthTotals = useCallback(async () => {
     const res = await fetch(`/api/ledger?month=${monthKey}`)
-    setDayTotals(await res.json())
+    const data = await res.json()
+    setDayTotals(data.byDate ?? [])
+    setByPerson(data.byPerson ?? {})
   }, [monthKey])
 
   const fetchEntries = useCallback(async (date: string) => {
@@ -157,7 +160,7 @@ export default function LedgerContent() {
             style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>{name}</p>
             <p style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)' }}>
-              {entries.filter((e) => e.paidBy === name).reduce((s, e) => s + e.amount, 0).toLocaleString()}원
+              {(byPerson[name] ?? 0).toLocaleString()}원
             </p>
           </div>
         ))}

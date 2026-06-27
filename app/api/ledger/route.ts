@@ -12,10 +12,15 @@ export async function GET(request: NextRequest) {
       select: { date: true, amount: true, paidBy: true },
     })
     const byDate: Record<string, number> = {}
+    const byPerson: Record<string, number> = {}
     for (const e of entries) {
       byDate[e.date] = (byDate[e.date] ?? 0) + e.amount
+      byPerson[e.paidBy] = (byPerson[e.paidBy] ?? 0) + e.amount
     }
-    return NextResponse.json(Object.entries(byDate).map(([date, total]) => ({ date, total })))
+    return NextResponse.json({
+      byDate: Object.entries(byDate).map(([date, total]) => ({ date, total })),
+      byPerson,
+    })
   }
 
   if (date) {
