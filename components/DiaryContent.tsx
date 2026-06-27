@@ -75,6 +75,10 @@ export default function DiaryContent() {
   }, [selectedDate])
 
   const handleDayClick = (dateStr: string) => {
+    if (window.innerWidth < 768) {
+      router.push(`/diary/edit?date=${dateStr}`)
+      return
+    }
     setSelectedDate(dateStr)
     router.replace(`/diary?date=${dateStr}`, { scroll: false })
   }
