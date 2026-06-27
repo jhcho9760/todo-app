@@ -83,7 +83,7 @@ export default function MobileSidebar() {
           <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--border)', margin: '0 auto' }} />
           <button
             onClick={() => setOpen(false)}
-            style={{ position: 'absolute', right: '16px', top: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px', lineHeight: 1 }}
+            style={{ position: 'absolute', right: '16px', top: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px', lineHeight: 1 }}
           >×</button>
         </div>
 
