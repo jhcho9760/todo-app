@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import Script from 'next/script'
 
 declare global {
   interface Window {
@@ -93,7 +92,6 @@ export default function MapContent() {
       setResults([])
     })
 
-    // 지도 초기화 후 저장된 장소 핀 표시
     fetch('/api/places')
       .then((r) => r.json())
       .then((data: DatePlace[]) => {
@@ -101,6 +99,17 @@ export default function MapContent() {
         addSavedMarkers(data)
       })
   }, [addSavedMarkers])
+
+  // Script onLoad 대신 직접 스크립트 주입
+  useEffect(() => {
+    if (mapRef.current) return
+    const script = document.createElement('script')
+    script.src = `https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${TMAP_APP_KEY}`
+    script.onload = () => initMap()
+    script.onerror = () => console.error('T맵 SDK 로드 실패')
+    document.head.appendChild(script)
+    return () => { document.head.removeChild(script) }
+  }, [initMap])
 
   // places 업데이트 시 핀 재렌더링 (지도가 이미 초기화된 경우)
   useEffect(() => {
@@ -191,11 +200,6 @@ export default function MapContent() {
 
   return (
     <>
-      <Script
-        src={`https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${TMAP_APP_KEY}`}
-        strategy="afterInteractive"
-        onLoad={initMap}
-      />
 
       <div style={{ position: 'relative', height: 'calc(100vh - 44px - env(safe-area-inset-top))', overflow: 'hidden' }}>
         {/* 검색창 */}
