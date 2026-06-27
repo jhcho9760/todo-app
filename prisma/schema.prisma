@@ -55,3 +55,27 @@ model DatePlace {
   visitedAt String?
   createdAt DateTime @default(now())
 }
+
+model Trip {
+  id           Int         @id @default(autoincrement())
+  name         String
+  startDate    String
+  endDate      String?
+  memo         String      @default("")
+  coverPlaceId Int?
+  createdAt    DateTime    @default(now())
+  places       TripPlace[]
+}
+
+model TripPlace {
+  id        Int      @id @default(autoincrement())
+  tripId    Int
+  name      String
+  lat       Float
+  lng       Float
+  memo      String   @default("")
+  visitedAt String?
+  photoData String?
+  createdAt DateTime @default(now())
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
