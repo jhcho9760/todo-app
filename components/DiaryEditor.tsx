@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import PhotoCollage from '@/components/PhotoCollage'
 
 const MOODS = [
   { value: 'great', emoji: '😊', label: '최고' },
@@ -203,24 +204,12 @@ export default function DiaryEditor() {
       />
 
       {photos.length > 0 && (
-        <div className="flex flex-col gap-3 mb-4">
-          {photos.map((fileId) => (
-            <div key={fileId} className="relative group rounded-[14px] overflow-hidden" style={{ aspectRatio: '4/3' }}>
-              <img
-                src={getDriveImageUrl(fileId)}
-                alt=""
-                className="w-full h-full object-cover cursor-pointer"
-                onClick={() => setLightbox(fileId)}
-              />
-              <button
-                onClick={() => handlePhotoDelete(fileId)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '18px' }}
-              >
-                ×
-              </button>
-            </div>
-          ))}
+        <div className="mb-4">
+          <PhotoCollage
+            photos={photos}
+            onPhotoClick={(id) => setLightbox(id)}
+            onPhotoDelete={handlePhotoDelete}
+          />
         </div>
       )}
 

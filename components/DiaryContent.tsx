@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { getMonthGrid, toDateStr, isToday } from '@/lib/calendar'
 import CalendarHeader from '@/components/CalendarHeader'
+import PhotoCollage from '@/components/PhotoCollage'
 
 const getDriveImageUrl = (fileId: string) =>
   `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`
@@ -322,25 +323,12 @@ export default function DiaryContent() {
               />
 
               {editPhotos.length > 0 && (
-                <div className="flex flex-col gap-3 mb-4">
-                  {editPhotos.map((fileId) => (
-                    <div key={fileId} className="relative group rounded-[14px] overflow-hidden">
-                      <img
-                        src={getDriveImageUrl(fileId)}
-                        alt=""
-                        className="w-full cursor-pointer"
-                        style={{ display: 'block' }}
-                        onClick={() => setLightboxPhoto(fileId)}
-                      />
-                      <button
-                        onClick={() => handlePhotoDelete(fileId)}
-                        className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '18px' }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
+                <div className="mb-4">
+                  <PhotoCollage
+                    photos={editPhotos}
+                    onPhotoClick={(id) => setLightboxPhoto(id)}
+                    onPhotoDelete={handlePhotoDelete}
+                  />
                 </div>
               )}
 
