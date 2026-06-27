@@ -26,6 +26,7 @@ export default function LedgerContent() {
 
   const [dayTotals, setDayTotals] = useState<DayTotal[]>([])
   const [byPerson, setByPerson] = useState<Record<string, number>>({})
+  const [byCategory, setByCategory] = useState<Record<string, number>>({})
   const [selectedDate, setSelectedDate] = useState<string | null>(dateParam)
   const [entries, setEntries] = useState<LedgerEntry[]>([])
   const [names, setNames] = useState<[string, string]>(['', ''])
@@ -41,6 +42,7 @@ export default function LedgerContent() {
     const data = await res.json()
     setDayTotals(data.byDate ?? [])
     setByPerson(data.byPerson ?? {})
+    setByCategory(data.byCategory ?? {})
   }, [monthKey])
 
   const fetchEntries = useCallback(async (date: string) => {
@@ -364,6 +366,35 @@ export default function LedgerContent() {
           </div>
         )}
       </div>
+
+      {/* 카테고리 통계 */}
+      {Object.keys(byCategory).length > 0 && (
+        <div className="mt-6 rounded-[18px] p-6" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p className="mb-4" style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>카테고리별 지출</p>
+          {(() => {
+            const max = Math.max(...Object.values(byCategory))
+            const CATEGORY_COLORS: Record<string, string> = {
+              식사: '#ff6b6b', 카페: '#ffa94d', 영화: '#a9e34b', 쇼핑: '#74c0fc', 숙소: '#da77f2', 기타: '#adb5bd',
+            }
+            return Object.entries(byCategory)
+              .sort((a, b) => b[1] - a[1])
+              .map(([cat, amt]) => (
+                <div key={cat} className="mb-3">
+                  <div className="flex justify-between mb-1">
+                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{cat}</span>
+                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{amt.toLocaleString()}원</span>
+                  </div>
+                  <div className="w-full rounded-full overflow-hidden" style={{ height: '8px', backgroundColor: 'var(--bg-hover)' }}>
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{ width: `${(amt / max) * 100}%`, backgroundColor: CATEGORY_COLORS[cat] ?? '#adb5bd' }}
+                    />
+                  </div>
+                </div>
+              ))
+          })()}
+        </div>
+      )}
     </main>
   )
 }
