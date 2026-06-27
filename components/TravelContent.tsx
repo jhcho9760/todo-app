@@ -3,19 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import TripFormSheet, { Trip, TripPlace } from './TripFormSheet'
 
-declare global {
-  interface Window {
-    kakao: {
-      maps: {
-        Map: new (container: HTMLElement, options: object) => KakaoMap
-        LatLng: new (lat: number, lng: number) => KakaoLatLng
-        Marker: new (options: object) => KakaoMarker
-        event: { addListener: (target: object, type: string, handler: (e: KakaoMouseEvent) => void) => void }
-        services: { Places: new () => KakaoPlaces; Status: { OK: string } }
-      }
-    }
-  }
-}
 interface KakaoLatLng { getLat: () => number; getLng: () => number }
 interface KakaoMouseEvent { latLng: KakaoLatLng }
 interface KakaoMap { setCenter: (latlng: KakaoLatLng) => void }
