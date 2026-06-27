@@ -6,6 +6,7 @@ declare global {
   interface Window {
     kakao: {
       maps: {
+        load: (callback: () => void) => void
         Map: new (container: HTMLElement, options: object) => KakaoMap
         LatLng: new (lat: number, lng: number) => KakaoLatLng
         Marker: new (options: object) => KakaoMarker
