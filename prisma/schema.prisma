@@ -45,3 +45,13 @@ model LedgerEntry {
   paidBy    String
   createdAt DateTime @default(now())
 }
+
+model DatePlace {
+  id        Int      @id @default(autoincrement())
+  name      String
+  lat       Float
+  lng       Float
+  memo      String   @default("")
+  visitedAt String?
+  createdAt DateTime @default(now())
+}

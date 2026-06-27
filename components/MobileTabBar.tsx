@@ -9,6 +9,7 @@ export default function MobileTabBar() {
   const view = searchParams.get('view')
   const isDiary = pathname.startsWith('/diary')
   const isLedger = pathname.startsWith('/ledger')
+  const isMap = pathname.startsWith('/map')
   const isDashboard = pathname === '/' && !view
 
   const tabs = [
@@ -91,6 +92,17 @@ export default function MobileTabBar() {
           <rect x="3" y="5" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
           <path d="M3 9H19" stroke="currentColor" strokeWidth="1.5" />
           <circle cx="15" cy="13" r="1.5" stroke="currentColor" strokeWidth="1.3" />
+        </svg>
+      ),
+    },
+    {
+      label: '지도',
+      href: '/map',
+      active: isMap,
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M11 2C6.58 2 3 5.58 3 10C3 15.25 11 21 11 21C11 21 19 15.25 19 10C19 5.58 15.42 2 11 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <circle cx="11" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5" />
         </svg>
       ),
     },
