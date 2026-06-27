@@ -8,7 +8,7 @@ const MOODS = [
   { value: 'good', emoji: '🙂', label: '좋음' },
   { value: 'neutral', emoji: '😐', label: '보통' },
   { value: 'bad', emoji: '😔', label: '나쁨' },
-  { value: 'awful', emoji: '😢', label: '최악' },
+  { value: 'awful', emoji: '😢', label: '슬픔' },
   { value: 'heart', emoji: '❤️', label: 'X' },
   { value: 'fire', emoji: '❤️‍🔥', label: 'O' },
 ]
