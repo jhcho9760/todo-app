@@ -30,6 +30,8 @@ export default function LedgerContent() {
   const [names, setNames] = useState<[string, string]>(['', ''])
   const [form, setForm] = useState({ label: '', amount: '', category: '식사', paidBy: '' })
   const [adding, setAdding] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState({ label: '', amount: '', category: '식사', paidBy: '' })
 
   const monthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`
 
@@ -82,6 +84,22 @@ export default function LedgerContent() {
 
   const handleDelete = async (id: number) => {
     await fetch(`/api/ledger/${id}`, { method: 'DELETE' })
+    if (selectedDate) await fetchEntries(selectedDate)
+    fetchMonthTotals()
+  }
+
+  const handleEditStart = (e: LedgerEntry) => {
+    setEditingId(e.id)
+    setEditForm({ label: e.label, amount: String(e.amount), category: e.category, paidBy: e.paidBy })
+  }
+
+  const handleEditSave = async (id: number) => {
+    await fetch(`/api/ledger/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label: editForm.label, amount: Number(editForm.amount), category: editForm.category, paidBy: editForm.paidBy }),
+    })
+    setEditingId(null)
     if (selectedDate) await fetchEntries(selectedDate)
     fetchMonthTotals()
   }
@@ -216,16 +234,62 @@ export default function LedgerContent() {
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>지출 내역이 없습니다</p>
               )}
               {entries.map((e) => (
-                <div key={e.id} className="flex items-center justify-between px-3 py-2 rounded-[10px]"
-                  style={{ backgroundColor: 'var(--bg-hover)' }}>
-                  <div>
-                    <span style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>{e.label}</span>
-                    <span className="ml-2" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{e.category} · {e.paidBy}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{e.amount.toLocaleString()}원</span>
-                    <button onClick={() => handleDelete(e.id)} style={{ fontSize: '16px', color: '#ff3b30' }}>×</button>
-                  </div>
+                <div key={e.id} className="rounded-[10px] px-3 py-2" style={{ backgroundColor: 'var(--bg-hover)' }}>
+                  {editingId === e.id ? (
+                    <div className="flex flex-col gap-2">
+                      <input
+                        value={editForm.label}
+                        onChange={(ev) => setEditForm((f) => ({ ...f, label: ev.target.value }))}
+                        className="w-full outline-none px-2 py-1 rounded-[6px]"
+                        style={{ fontSize: '14px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                      />
+                      <input
+                        value={editForm.amount}
+                        onChange={(ev) => setEditForm((f) => ({ ...f, amount: ev.target.value.replace(/[^0-9]/g, '') }))}
+                        type="text"
+                        inputMode="numeric"
+                        className="w-full outline-none px-2 py-1 rounded-[6px]"
+                        style={{ fontSize: '14px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                      />
+                      <div className="flex gap-2">
+                        <select
+                          value={editForm.category}
+                          onChange={(ev) => setEditForm((f) => ({ ...f, category: ev.target.value }))}
+                          className="flex-1 outline-none px-2 py-1 rounded-[6px]"
+                          style={{ fontSize: '13px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                        >
+                          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                        <select
+                          value={editForm.paidBy}
+                          onChange={(ev) => setEditForm((f) => ({ ...f, paidBy: ev.target.value }))}
+                          className="flex-1 outline-none px-2 py-1 rounded-[6px]"
+                          style={{ fontSize: '13px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                        >
+                          {names.filter(Boolean).map((n) => <option key={n} value={n}>{n}</option>)}
+                        </select>
+                      </div>
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => setEditingId(null)} style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>취소</button>
+                        <button onClick={() => handleEditSave(e.id)}
+                          className="px-3 py-1 rounded-full"
+                          style={{ fontSize: '13px', fontWeight: 600, backgroundColor: '#0066cc', color: '#fff' }}>
+                          저장
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <button className="flex-1 text-left" onClick={() => handleEditStart(e)}>
+                        <span style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>{e.label}</span>
+                        <span className="ml-2" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{e.category} · {e.paidBy}</span>
+                      </button>
+                      <div className="flex items-center gap-2">
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{e.amount.toLocaleString()}원</span>
+                        <button onClick={() => handleDelete(e.id)} style={{ fontSize: '16px', color: '#ff3b30' }}>×</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
