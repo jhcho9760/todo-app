@@ -64,6 +64,10 @@ export default function LedgerContent() {
   }, [selectedDate, fetchEntries])
 
   const handleDayClick = (dateStr: string) => {
+    if (window.innerWidth < 768) {
+      router.push(`/ledger/edit?date=${dateStr}`)
+      return
+    }
     setSelectedDate(dateStr)
     router.replace(`/ledger?date=${dateStr}`, { scroll: false })
   }
