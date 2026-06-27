@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   if (month) {
     const entries = await prisma.ledgerEntry.findMany({
       where: { date: { startsWith: month } },
-      select: { date: true, amount: true, paidBy: true },
+      select: { date: true, amount: true, paidBy: true, category: true },
     })
     const byDate: Record<string, number> = {}
     const byPerson: Record<string, number> = {}
