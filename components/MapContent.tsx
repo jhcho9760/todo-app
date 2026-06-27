@@ -35,7 +35,7 @@ const KAKAO_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY ?? ''
 
 export default function MapContent() {
   const mapRef = useRef<KakaoMap | null>(null)
-  const overlaysRef = useRef<Map<number, KakaoOverlay>>(new Map())
+  const overlaysRef = useRef<Map<number, KakaoMarker>>(new Map())
   const previewMarkerRef = useRef<KakaoMarker | null>(null)
 
   const [places, setPlaces] = useState<DatePlace[]>([])
@@ -56,24 +56,18 @@ export default function MapContent() {
   }, [])
 
   const addSavedMarkers = useCallback((currentPlaces: DatePlace[], map: KakaoMap) => {
-    overlaysRef.current.forEach((o) => o.setMap(null))
+    overlaysRef.current.forEach((m) => m.setMap(null))
     overlaysRef.current.clear()
     currentPlaces.forEach((p) => {
-      const content = `<div style="background:#0066cc;color:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 6px rgba(0,0,102,0.35);cursor:pointer" title="${p.name}">📍</div>`
-      const overlay = new window.kakao.maps.CustomOverlay({
+      const marker = new window.kakao.maps.Marker({
         position: new window.kakao.maps.LatLng(p.lat, p.lng),
-        content,
         map,
-        yAnchor: 1,
       })
-      const el = (overlay as unknown as { getContent: () => HTMLElement }).getContent?.()
-      if (el) {
-        el.addEventListener('click', () => {
-          setPanel({ type: 'view', place: p })
-          setResults([])
-        })
-      }
-      overlaysRef.current.set(p.id, overlay)
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        setPanel({ type: 'view', place: p })
+        setResults([])
+      })
+      overlaysRef.current.set(p.id, marker)
     })
   }, [])
 
@@ -110,15 +104,13 @@ export default function MapContent() {
 
   useEffect(() => {
     if (mapRef.current) return
+    if (window.kakao?.maps) { initMap(); return }
     const script = document.createElement('script')
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_KEY}&libraries=services&autoload=false`
-    script.onload = () => {
-      window.kakao.maps.load(() => initMap())
-    }
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_KEY}&libraries=services`
+    script.async = true
+    script.onload = () => initMap()
+    script.onerror = () => console.error('카카오맵 SDK 로드 실패 — 앱키 확인 필요')
     document.head.appendChild(script)
-    return () => {
-      if (document.head.contains(script)) document.head.removeChild(script)
-    }
   }, [initMap])
 
   useEffect(() => {
