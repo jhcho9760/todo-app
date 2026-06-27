@@ -36,8 +36,9 @@ export default function DiaryContent() {
     return new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   })
 
+  const todayStr = toDateStr(new Date())
   const [entryMetas, setEntryMetas] = useState<EntryMeta[]>([])
-  const [selectedDate, setSelectedDate] = useState<string | null>(dateParam)
+  const [selectedDate, setSelectedDate] = useState<string | null>(dateParam ?? todayStr)
   const [entry, setEntry] = useState<EntryFull | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')

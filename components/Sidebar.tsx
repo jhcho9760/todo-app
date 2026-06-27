@@ -92,7 +92,7 @@ export default function Sidebar() {
       <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '4px 12px 12px' }} />
 
       {/* 데이트 달력 섹션 */}
-      <SectionHeader label="데이트 달력" open={diaryOpen} onToggle={() => setDiaryOpen(!diaryOpen)} />
+      <SectionHeader label="❤️" open={diaryOpen} onToggle={() => setDiaryOpen(!diaryOpen)} />
       {diaryOpen && (
         <nav className="mt-1 flex flex-col gap-0.5 px-2">
           {DIARY_ITEMS.map(({ label, href }) => {
