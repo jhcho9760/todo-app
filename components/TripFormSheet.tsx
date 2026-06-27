@@ -74,7 +74,7 @@ export default function TripFormSheet({ trip, onSave, onClose }: Props) {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0,
+      position: 'fixed', bottom: 'calc(56px + env(safe-area-inset-bottom))', left: 0, right: 0,
       backgroundColor: 'var(--bg-card)',
       borderRadius: '20px 20px 0 0',
       boxShadow: '0 -4px 20px rgba(0,0,0,0.12)',

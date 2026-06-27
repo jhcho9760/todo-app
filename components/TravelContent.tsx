@@ -283,7 +283,7 @@ export default function TravelContent() {
 
       {/* 장소 패널 */}
       {panel && selectedTrip && (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: 'var(--bg-card)', borderRadius: '20px 20px 0 0', boxShadow: '0 -4px 20px rgba(0,0,0,0.12)', maxHeight: '65vh', overflowY: 'auto', zIndex: 10, padding: '20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))' }}>
+        <div style={{ position: 'fixed', bottom: 'calc(56px + env(safe-area-inset-bottom))', left: 0, right: 0, backgroundColor: 'var(--bg-card)', borderRadius: '20px 20px 0 0', boxShadow: '0 -4px 20px rgba(0,0,0,0.12)', maxHeight: '60vh', overflowY: 'auto', zIndex: 10, padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <p style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
               {panel.type === 'view' ? panel.place.name : panel.type === 'edit' ? '장소 수정' : '새 장소 추가'}
