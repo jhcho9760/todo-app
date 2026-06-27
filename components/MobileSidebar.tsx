@@ -26,24 +26,25 @@ export default function MobileSidebar() {
   const [todoOpen, setTodoOpen] = useState(true)
   const [diaryOpen, setDiaryOpen] = useState(true)
 
-  // 라우트 변경 시 닫기
   useEffect(() => { setOpen(false) }, [pathname, currentView])
 
   return (
     <>
-      {/* 햄버거 버튼 — 모바일 전용, 네브바 왼쪽 */}
+      {/* 하단 햄버거 버튼 */}
       <button
         className="md:hidden fixed z-[60] flex items-center justify-center"
         onClick={() => setOpen(true)}
         style={{
-          top: 'env(safe-area-inset-top)',
-          left: 0,
-          width: '44px',
-          height: '44px',
-          background: 'none',
+          bottom: 'calc(16px + env(safe-area-inset-bottom))',
+          right: '20px',
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          backgroundColor: '#0066cc',
           border: 'none',
           cursor: 'pointer',
           color: '#ffffff',
+          boxShadow: '0 4px 16px rgba(0,102,204,0.4)',
         }}
         aria-label="메뉴 열기"
       >
@@ -63,32 +64,36 @@ export default function MobileSidebar() {
         />
       )}
 
-      {/* 드로어 */}
+      {/* 바텀 드로어 */}
       <aside
-        className="md:hidden fixed top-0 left-0 bottom-0 z-[80] flex flex-col overflow-y-auto"
+        className="md:hidden fixed left-0 right-0 bottom-0 z-[80] flex flex-col overflow-y-auto"
         style={{
-          width: '220px',
-          paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
-          paddingBottom: '32px',
+          maxHeight: '70vh',
+          paddingTop: '20px',
+          paddingBottom: 'calc(24px + env(safe-area-inset-bottom))',
           backgroundColor: 'var(--bg-sidebar)',
-          borderRight: '1px solid var(--border)',
-          transform: open ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.25s ease',
+          borderRadius: '20px 20px 0 0',
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.15)',
+          transform: open ? 'translateY(0)' : 'translateY(100%)',
+          transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)',
         }}
       >
-        {/* 닫기 버튼 */}
-        <button
-          onClick={() => setOpen(false)}
-          style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top) + 10px)', right: '12px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px', lineHeight: 1 }}
-        >×</button>
+        {/* 핸들 + 닫기 */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 12px' }}>
+          <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--border)', margin: '0 auto' }} />
+          <button
+            onClick={() => setOpen(false)}
+            style={{ position: 'absolute', right: '16px', top: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px', lineHeight: 1 }}
+          >×</button>
+        </div>
 
         {/* 대시보드 */}
         <nav className="px-2 mb-3">
           <Link
             href="/"
-            className="flex items-center gap-2 px-3 py-2 rounded-[8px]"
+            className="flex items-center gap-2 px-3 py-2.5 rounded-[8px]"
             style={{
-              fontSize: '14px',
+              fontSize: '15px',
               fontWeight: isDashboard ? 600 : 400,
               color: isDashboard ? '#0066cc' : 'var(--text-primary)',
               backgroundColor: isDashboard ? 'rgba(0,102,204,0.1)' : 'transparent',
@@ -116,9 +121,9 @@ export default function MobileSidebar() {
                 <Link
                   key={view}
                   href={`/?view=${view}`}
-                  className="flex items-center gap-2 px-3 py-2 rounded-[8px]"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-[8px]"
                   style={{
-                    fontSize: '14px',
+                    fontSize: '15px',
                     fontWeight: active ? 600 : 400,
                     color: active ? '#0066cc' : 'var(--text-primary)',
                     backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
@@ -145,9 +150,9 @@ export default function MobileSidebar() {
                 <Link
                   key={href}
                   href={href}
-                  className="flex items-center gap-2 px-3 py-2 rounded-[8px]"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-[8px]"
                   style={{
-                    fontSize: '14px',
+                    fontSize: '15px',
                     fontWeight: active ? 600 : 400,
                     color: active ? '#0066cc' : 'var(--text-primary)',
                     backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
