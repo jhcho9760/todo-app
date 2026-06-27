@@ -8,6 +8,7 @@ export default function MobileTabBar() {
   const pathname = usePathname()
   const view = searchParams.get('view')
   const isDiary = pathname.startsWith('/diary')
+  const isLedger = pathname.startsWith('/ledger')
   const isDashboard = pathname === '/' && !view
 
   const tabs = [
@@ -77,9 +78,19 @@ export default function MobileTabBar() {
       active: isDiary,
       icon: (
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M11 2C11 2 6 6 6 11C6 13.76 8.24 16 11 16C13.76 16 16 13.76 16 11C16 6 11 2 11 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-          <line x1="11" y1="16" x2="11" y2="20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="7" y1="20" x2="15" y2="20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M11 19.5C11 19.5 2.5 14 2.5 7.5C2.5 5.01 4.51 3 7 3C8.66 3 10.13 3.9 11 5.23C11.87 3.9 13.34 3 15 3C17.49 3 19.5 5.01 19.5 7.5C19.5 14 11 19.5 11 19.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+    {
+      label: '가계부',
+      href: '/ledger',
+      active: isLedger,
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="3" y="5" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M3 9H19" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="15" cy="13" r="1.5" stroke="currentColor" strokeWidth="1.3" />
         </svg>
       ),
     },
