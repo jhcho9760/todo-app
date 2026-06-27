@@ -26,7 +26,9 @@ export default function NavBar() {
         paddingBottom: '0px',
       }}
     >
-      <Link href="/" className="font-normal tracking-[-0.12px]" style={{ fontSize: '12px', color: '#ffffff' }}>
+      {/* 모바일: 햄버거 버튼 공간 확보용 spacer */}
+      <div className="md:hidden" style={{ width: '44px' }} />
+      <Link href="/" className="font-normal tracking-[-0.12px] md:static absolute left-1/2 md:left-auto md:transform-none" style={{ fontSize: '12px', color: '#ffffff', transform: 'translateX(-50%)' }}>
         나윤&apos;s Board
       </Link>
 

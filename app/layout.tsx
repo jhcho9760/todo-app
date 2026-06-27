@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import NavBar from '@/components/NavBar'
 import Sidebar from '@/components/Sidebar'
-import MobileTabBar from '@/components/MobileTabBar'
+import MobileSidebar from '@/components/MobileSidebar'
 import InstallPrompt from '@/components/InstallPrompt'
 import ThemeProvider from '@/components/ThemeProvider'
 import './globals.css'
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex-1 min-w-0">{children}</div>
           </div>
           <Suspense fallback={null}>
-            <MobileTabBar />
+            <MobileSidebar />
           </Suspense>
           <InstallPrompt />
         </ThemeProvider>
