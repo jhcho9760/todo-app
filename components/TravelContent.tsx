@@ -44,6 +44,7 @@ export default function TravelContent() {
   const [saving, setSaving] = useState(false)
   const [tripFormOpen, setTripFormOpen] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
+  const [expandedTripId, setExpandedTripId] = useState<number | null>(null)
 
   const selectedTrip = trips.find((t) => t.id === selectedTripId) ?? null
 
@@ -197,11 +198,23 @@ export default function TravelContent() {
     setTrips((prev) => prev.map((t) => t.id === selectedTripId ? { ...t, coverPlaceId: placeId } : t))
   }
 
-  const handleDeleteTrip = async () => {
-    if (!selectedTripId) return
+  const handleSelectTrip = useCallback((tripId: number) => {
+    setSelectedTripId(tripId)
+    setExpandedTripId((prev) => (prev === tripId ? null : tripId))
+    setPanel(null)
+  }, [])
+
+  const handleSelectPlace = useCallback((place: TripPlace) => {
+    if (!mapRef.current) return
+    mapRef.current.setCenter(new window.kakao.maps.LatLng(place.lat, place.lng))
+    setPanel({ type: 'view', place })
+  }, [])
+
+  const handleDeleteTripById = async (tripId: number) => {
     if (!confirm('이 여행을 삭제하면 장소도 모두 삭제됩니다. 계속할까요?')) return
-    await fetch(`/api/trips/${selectedTripId}`, { method: 'DELETE' })
-    setSelectedTripId(null)
+    await fetch(`/api/trips/${tripId}`, { method: 'DELETE' })
+    if (selectedTripId === tripId) setSelectedTripId(null)
+    setExpandedTripId(null)
     fetchTrips()
   }
 
@@ -212,78 +225,151 @@ export default function TravelContent() {
   }
 
   return (
-    <div style={{ position: 'relative', height: 'calc(100vh - 44px - env(safe-area-inset-top))', overflow: 'hidden' }}>
-      {/* 상단 컨트롤 */}
-      <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px', flexDirection: 'column' }}>
-        {/* 여행 선택 + 버튼 */}
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <select
-            value={selectedTripId ?? ''}
-            onChange={(e) => setSelectedTripId(e.target.value ? Number(e.target.value) : null)}
-            style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', appearance: 'none', paddingRight: '32px', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23999\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
-          >
-            <option value="">여행을 선택하세요</option>
-            {trips.map((t) => (
-              <option key={t.id} value={t.id}>{t.name} ({t.startDate})</option>
-            ))}
-          </select>
+    <div style={{ display: 'flex', height: 'calc(100vh - 44px - env(safe-area-inset-top))', overflow: 'hidden' }}>
+      {/* 데스크톱 사이드바 */}
+      <aside
+        className="hidden md:flex flex-col"
+        style={{ width: '240px', flexShrink: 0, backgroundColor: 'var(--bg-card)', borderRight: '1px solid var(--border)', overflowY: 'auto' }}
+      >
+        <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>나의 여행</span>
           <button
             onClick={() => { setEditingTrip(null); setTripFormOpen(true) }}
-            style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+            style={{ fontSize: '13px', fontWeight: 600, color: '#0066cc', background: 'none', border: 'none', cursor: 'pointer' }}
           >
             + 새 여행
           </button>
         </div>
 
-        {/* 여행 선택됐을 때: 장소 검색 + 여행 수정/삭제 */}
-        {selectedTrip && (
-          <>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="장소 검색..."
-                style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-              />
-              <button onClick={handleSearch} style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}>검색</button>
+        {trips.length === 0 && (
+          <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
+            + 새 여행을 눌러 시작하세요
+          </div>
+        )}
+
+        {trips.map((trip) => {
+          const isExpanded = expandedTripId === trip.id
+          const isSelected = selectedTripId === trip.id
+          return (
+            <div key={trip.id}>
+              <div
+                style={{
+                  display: 'flex', alignItems: 'center', padding: '12px 16px', cursor: 'pointer', gap: '8px',
+                  backgroundColor: isSelected ? 'rgba(0,102,204,0.06)' : 'transparent',
+                  borderBottom: '1px solid var(--border)',
+                }}
+                onClick={() => handleSelectTrip(trip.id)}
+              >
+                <span style={{ fontSize: '14px' }}>✈️</span>
+                <span style={{ flex: 1, fontSize: '14px', fontWeight: isSelected ? 600 : 400, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {trip.name}
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setEditingTrip(trip); setTripFormOpen(true) }}
+                  style={{ fontSize: '14px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: '2px' }}
+                >✏️</button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDeleteTripById(trip.id) }}
+                  style={{ fontSize: '14px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: '2px' }}
+                >🗑</button>
+              </div>
+
+              {isExpanded && (
+                <div style={{ backgroundColor: 'var(--bg-hover)' }}>
+                  {trip.places.length === 0 && (
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', padding: '10px 24px' }}>장소를 검색해서 추가하세요</p>
+                  )}
+                  {trip.places.map((place) => (
+                    <div
+                      key={place.id}
+                      onClick={() => handleSelectPlace(place)}
+                      style={{ padding: '8px 24px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <span>📍</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{place.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => { setEditingTrip(selectedTrip); setTripFormOpen(true) }} style={{ fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>수정</button>
-              <button onClick={handleDeleteTrip} style={{ fontSize: '12px', color: '#ff3b30', background: 'rgba(255,59,48,0.08)', border: 'none', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>삭제</button>
-              {selectedTrip.memo && <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, alignSelf: 'center' }}>{selectedTrip.memo}</p>}
-            </div>
-          </>
+          )
+        })}
+      </aside>
+
+      {/* 지도 영역 */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {/* 상단 컨트롤 */}
+        <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px', flexDirection: 'column' }}>
+          {/* 모바일 여행 선택 + 버튼 (md 이상에서는 숨김) */}
+          <div className="flex md:hidden" style={{ gap: '8px' }}>
+            <select
+              value={selectedTripId ?? ''}
+              onChange={(e) => setSelectedTripId(e.target.value ? Number(e.target.value) : null)}
+              style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', appearance: 'none', paddingRight: '32px', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23999\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+            >
+              <option value="">여행을 선택하세요</option>
+              {trips.map((t) => (
+                <option key={t.id} value={t.id}>{t.name} ({t.startDate})</option>
+              ))}
+            </select>
+            <button
+              onClick={() => { setEditingTrip(null); setTripFormOpen(true) }}
+              style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+            >
+              + 새 여행
+            </button>
+          </div>
+
+          {/* 장소 검색 (여행 선택됐을 때) */}
+          {selectedTrip && (
+            <>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  placeholder="장소 검색..."
+                  style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                />
+                <button onClick={handleSearch} style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}>검색</button>
+              </div>
+              <div className="flex md:hidden" style={{ gap: '8px' }}>
+                <button onClick={() => { setEditingTrip(selectedTrip); setTripFormOpen(true) }} style={{ fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>수정</button>
+                <button onClick={() => handleDeleteTripById(selectedTripId!)} style={{ fontSize: '12px', color: '#ff3b30', background: 'rgba(255,59,48,0.08)', border: 'none', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>삭제</button>
+                {selectedTrip.memo && <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, alignSelf: 'center' }}>{selectedTrip.memo}</p>}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* 검색 결과 */}
+        {results.length > 0 && (
+          <div style={{ position: 'absolute', top: selectedTrip ? '130px' : '68px', left: '12px', right: '12px', zIndex: 10, backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
+            {results.map((r, i) => (
+              <button key={i} onClick={() => handleSelectResult(r)} style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderBottom: i < results.length - 1 ? '1px solid var(--border)' : 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'block' }}>
+                <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>{r.place_name}</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', marginBottom: 0 }}>{r.address_name}</p>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* 지도 */}
+        <div id="travelmap" style={{ width: '100%', height: '100%' }} />
+
+        {/* 선택된 여행 없을 때 안내 */}
+        {!selectedTrip && trips.length > 0 && (
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>위에서 여행을 선택하세요</p>
+          </div>
+        )}
+        {trips.length === 0 && (
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+            <p style={{ fontSize: '32px', margin: '0 0 8px' }}>✈️</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>+ 새 여행을 눌러 첫 여행을 만들어보세요</p>
+          </div>
         )}
       </div>
-
-      {/* 검색 결과 */}
-      {results.length > 0 && (
-        <div style={{ position: 'absolute', top: selectedTrip ? '130px' : '68px', left: '12px', right: '12px', zIndex: 10, backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
-          {results.map((r, i) => (
-            <button key={i} onClick={() => handleSelectResult(r)} style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderBottom: i < results.length - 1 ? '1px solid var(--border)' : 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'block' }}>
-              <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>{r.place_name}</p>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', marginBottom: 0 }}>{r.address_name}</p>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* 지도 */}
-      <div id="travelmap" style={{ width: '100%', height: '100%' }} />
-
-      {/* 선택된 여행 없을 때 안내 */}
-      {!selectedTrip && trips.length > 0 && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>위에서 여행을 선택하세요</p>
-        </div>
-      )}
-      {trips.length === 0 && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
-          <p style={{ fontSize: '32px', margin: '0 0 8px' }}>✈️</p>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>+ 새 여행을 눌러 첫 여행을 만들어보세요</p>
-        </div>
-      )}
 
       {/* 장소 패널 */}
       {panel && selectedTrip && (
