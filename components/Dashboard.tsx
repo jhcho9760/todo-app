@@ -127,7 +127,8 @@ export default function Dashboard() {
   const total = allTodos.length
   const completed = allTodos.filter((t) => t.completed).length
   const incomplete = total - completed
-  const highPriority = allTodos.filter((t) => t.priority === 'HIGH' && !t.completed)
+  const nayunHighPriority = allTodos.filter((t) => t.owner === 'nayun' && t.priority === 'HIGH' && !t.completed)
+  const junhyungHighPriority = allTodos.filter((t) => t.owner === 'junhyung' && t.priority === 'HIGH' && !t.completed)
   const nayunIncomplete = nayunTodos.filter((t) => !t.completed)
   const junhyungIncomplete = junhyungTodos.filter((t) => !t.completed)
   const dday = calcDday(startDate)
@@ -343,19 +344,19 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* 높은 우선순위 */}
+        {/* 🌸 나윤 우선순위 */}
         <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>높은 우선순위</h2>
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>🌸 나윤 우선순위</h2>
             <span className="px-2 py-0.5 rounded-full" style={{ fontSize: '12px', color: '#ff3b30', backgroundColor: 'rgba(255,59,48,0.08)' }}>
-              {highPriority.length}개
+              {nayunHighPriority.length}개
             </span>
           </div>
-          {highPriority.length === 0 ? (
+          {nayunHighPriority.length === 0 ? (
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없습니다 👍</p>
           ) : (
             <div className="space-y-2">
-              {highPriority.slice(0, 5).map((todo) => (
+              {nayunHighPriority.slice(0, 5).map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#ff3b30' }} />
                   <div className="min-w-0">
@@ -368,7 +369,37 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-              {highPriority.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{highPriority.length - 5}개 더</p>}
+              {nayunHighPriority.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{nayunHighPriority.length - 5}개 더</p>}
+            </div>
+          )}
+        </div>
+
+        {/* 🦁 준형 우선순위 */}
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>🦁 준형 우선순위</h2>
+            <span className="px-2 py-0.5 rounded-full" style={{ fontSize: '12px', color: '#ff3b30', backgroundColor: 'rgba(255,59,48,0.08)' }}>
+              {junhyungHighPriority.length}개
+            </span>
+          </div>
+          {junhyungHighPriority.length === 0 ? (
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없습니다 👍</p>
+          ) : (
+            <div className="space-y-2">
+              {junhyungHighPriority.slice(0, 5).map((todo) => (
+                <div key={todo.id} className="flex items-start gap-2">
+                  <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#ff3b30' }} />
+                  <div className="min-w-0">
+                    <span className="truncate block" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
+                    {todo.dueDate && (
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                        {(() => { const [y, m, d] = todo.dueDate!.split('T')[0].split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) })()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {junhyungHighPriority.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{junhyungHighPriority.length - 5}개 더</p>}
             </div>
           )}
         </div>

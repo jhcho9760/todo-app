@@ -18,10 +18,10 @@ export async function POST(
   { params }: { params: Promise<{ date: string }> }
 ) {
   const { date } = await params
-  const { content } = await request.json()
+  const { content, author } = await request.json()
   if (!content?.trim()) return NextResponse.json({ error: 'empty' }, { status: 400 })
   const comment = await prisma.diaryComment.create({
-    data: { diaryDate: date, content: content.trim() },
+    data: { diaryDate: date, content: content.trim(), author: author ?? '' },
   })
   return NextResponse.json(comment)
 }

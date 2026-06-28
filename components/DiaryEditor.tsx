@@ -19,7 +19,7 @@ const getDriveImageUrl = (fileId: string) =>
   `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`
 
 interface Entry { date: string; title: string; content: string; mood: string | null; photos: string[]; updatedAt?: string }
-interface DiaryComment { id: number; diaryDate: string; content: string; createdAt: string }
+interface DiaryComment { id: number; diaryDate: string; author: string; content: string; createdAt: string }
 
 export default function DiaryEditor() {
   const searchParams = useSearchParams()
@@ -71,7 +71,7 @@ export default function DiaryEditor() {
     const res = await fetch(`/api/diary/${date}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: commentInput.trim() }),
+      body: JSON.stringify({ content: commentInput.trim(), author: user ?? '' }),
     })
     const created = await res.json()
     setComments((prev) => [...prev, created])
@@ -274,9 +274,17 @@ export default function DiaryEditor() {
               <div key={c.id} className="flex items-start gap-2">
                 <div
                   className="flex-1 rounded-[10px] px-3 py-2"
-                  style={{ backgroundColor: 'var(--bg-hover)', fontSize: '15px', color: 'var(--text-primary)', lineHeight: '1.5' }}
+                  style={{ backgroundColor: 'var(--bg-hover)', lineHeight: '1.5' }}
                 >
-                  {c.content}
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#0066cc' }}>
+                      {c.author === 'nayun' ? '🌸 나윤' : c.author === 'junhyung' ? '🦁 준형' : c.author}
+                    </span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                      {new Date(c.createdAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '15px', color: 'var(--text-primary)' }}>{c.content}</p>
                 </div>
                 <button
                   onClick={() => handleCommentDelete(c.id)}

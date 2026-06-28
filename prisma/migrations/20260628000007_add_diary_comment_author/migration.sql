@@ -1,0 +1,1 @@
+ALTER TABLE "DiaryComment" ADD COLUMN "author" TEXT NOT NULL DEFAULT '';

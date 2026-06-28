@@ -79,6 +79,7 @@ model Trip {
 model DiaryComment {
   id        Int      @id @default(autoincrement())
   diaryDate String
+  author    String   @default("")
   content   String
   createdAt DateTime @default(now())
 }
