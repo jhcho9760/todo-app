@@ -355,7 +355,7 @@ export default function TravelContent() {
 
         {/* 검색 결과 */}
         {results.length > 0 && (
-          <div style={{ position: 'absolute', top: selectedTrip ? '130px' : '68px', left: '12px', right: '12px', zIndex: 10, backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: selectedTrip ? '130px' : '68px', left: '12px', right: '12px', zIndex: 10, backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflowY: 'auto', maxHeight: '40vh' }}>
             {results.map((r, i) => (
               <button key={i} onClick={() => handleSelectResult(r)} style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderBottom: i < results.length - 1 ? '1px solid var(--border)' : 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'block' }}>
                 <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>{r.place_name}</p>
