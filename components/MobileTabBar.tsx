@@ -11,6 +11,7 @@ export default function MobileTabBar() {
   const isLedger = pathname.startsWith('/ledger')
   const isTravel = pathname.startsWith('/travel')
   const isBucket = pathname.startsWith('/bucket')
+  const isAnniversary = pathname.startsWith('/anniversary')
   const isDashboard = pathname === '/' && !view
 
   const tabs = [
@@ -116,6 +117,18 @@ export default function MobileTabBar() {
       icon: (
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
           <path d="M11 2.5L13.09 8.26L19.18 8.27L14.54 11.74L16.18 17.5L11 14.5L5.82 17.5L7.46 11.74L2.82 8.27L8.91 8.26L11 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+    {
+      label: '기념일',
+      href: '/anniversary',
+      active: isAnniversary,
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M11 19.5C11 19.5 2.5 14 2.5 7.5C2.5 5.01 4.51 3 7 3C8.66 3 10.13 3.9 11 5.23C11.87 3.9 13.34 3 15 3C17.49 3 19.5 5.01 19.5 7.5C19.5 14 11 19.5 11 19.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <line x1="11" y1="7" x2="11" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="8" y1="10" x2="14" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       ),
     },

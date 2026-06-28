@@ -16,6 +16,7 @@ const DIARY_ITEMS = [
   { label: '데이트 가계부', href: '/ledger' },
   { label: '여행', href: '/travel' },
   { label: '버킷리스트', href: '/bucket' },
+  { label: '기념일', href: '/anniversary' },
 ]
 
 export default function Sidebar() {
@@ -24,7 +25,7 @@ export default function Sidebar() {
   const currentView = searchParams.get('view')
   const currentOwner = searchParams.get('owner')
   const isDashboard = pathname === '/' && !currentView
-  const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/bucket')
+  const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/bucket') || pathname.startsWith('/anniversary')
   const [nayunOpen, setNayunOpen] = useState(true)
   const [junhyungOpen, setJunhyungOpen] = useState(true)
   const [diaryOpen, setDiaryOpen] = useState(true)

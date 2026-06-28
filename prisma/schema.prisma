@@ -75,6 +75,14 @@ model DiaryComment {
   createdAt DateTime @default(now())
 }
 
+model Anniversary {
+  id        Int      @id @default(autoincrement())
+  name      String
+  date      String
+  emoji     String   @default("🎉")
+  createdAt DateTime @default(now())
+}
+
 model BucketItem {
   id        Int      @id @default(autoincrement())
   title     String
