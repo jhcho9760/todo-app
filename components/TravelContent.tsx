@@ -304,12 +304,12 @@ export default function TravelContent() {
           <div className="flex md:hidden" style={{ gap: '8px' }}>
             <select
               value={selectedTripId ?? ''}
-              onChange={(e) => setSelectedTripId(e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) => e.target.value ? handleSelectTrip(Number(e.target.value)) : setSelectedTripId(null)}
               style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', appearance: 'none', paddingRight: '32px', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23999\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
             >
               <option value="">여행을 선택하세요</option>
               {trips.map((t) => (
-                <option key={t.id} value={t.id}>{t.name} ({t.startDate})</option>
+                <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
             <button
@@ -320,25 +320,32 @@ export default function TravelContent() {
             </button>
           </div>
 
-          {/* 장소 검색 (여행 선택됐을 때) */}
+          {/* 모바일 장소 검색 (여행 선택 시만) */}
           {selectedTrip && (
-            <>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="장소 검색..."
-                  style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                />
-                <button onClick={handleSearch} style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}>검색</button>
-              </div>
-              <div className="flex md:hidden" style={{ gap: '8px' }}>
-                <button onClick={() => { setEditingTrip(selectedTrip); setTripFormOpen(true) }} style={{ fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>수정</button>
-                <button onClick={() => handleDeleteTripById(selectedTripId!)} style={{ fontSize: '12px', color: '#ff3b30', background: 'rgba(255,59,48,0.08)', border: 'none', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer' }}>삭제</button>
-                {selectedTrip.memo && <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, alignSelf: 'center' }}>{selectedTrip.memo}</p>}
-              </div>
-            </>
+            <div className="flex md:hidden" style={{ gap: '8px' }}>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="장소 검색..."
+                style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+              />
+              <button onClick={handleSearch} style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}>검색</button>
+            </div>
+          )}
+
+          {/* 데스크톱 장소 검색 (여행 선택됐을 때) */}
+          {selectedTrip && (
+            <div className="hidden md:flex" style={{ gap: '8px' }}>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="장소 검색..."
+                style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+              />
+              <button onClick={handleSearch} style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}>검색</button>
+            </div>
           )}
         </div>
 
@@ -370,6 +377,40 @@ export default function TravelContent() {
           </div>
         )}
       </div>
+
+      {/* 모바일 바텀시트 — 장소 목록 */}
+      {selectedTrip && !panel && (
+        <div
+          className="flex md:hidden flex-col"
+          style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0,
+            backgroundColor: 'var(--bg-card)',
+            borderRadius: '20px 20px 0 0',
+            boxShadow: '0 -4px 20px rgba(0,0,0,0.12)',
+            maxHeight: '40vh', overflowY: 'auto',
+            zIndex: 10, padding: '12px 0',
+          }}
+        >
+          <div style={{ width: '36px', height: '4px', backgroundColor: 'var(--border)', borderRadius: '2px', margin: '0 auto 12px' }} />
+          {selectedTrip.places.length === 0 ? (
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', padding: '8px 20px' }}>장소를 검색해서 추가하세요</p>
+          ) : (
+            selectedTrip.places.map((place) => (
+              <div
+                key={place.id}
+                onClick={() => handleSelectPlace(place)}
+                style={{ padding: '10px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border)' }}
+              >
+                <span>📍</span>
+                <div>
+                  <p style={{ fontSize: '14px', color: 'var(--text-primary)', margin: 0, fontWeight: 500 }}>{place.name}</p>
+                  {place.visitedAt && <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>{place.visitedAt}</p>}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* 장소 패널 */}
       {panel && selectedTrip && (
