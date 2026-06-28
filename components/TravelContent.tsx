@@ -12,6 +12,8 @@ interface KakaoMap {
 interface KakaoMarker { setMap: (map: KakaoMap | null) => void }
 interface KakaoPlace { place_name: string; y: string; x: string; address_name: string }
 interface KakaoPlaces { keywordSearch: (q: string, cb: (data: KakaoPlace[], status: string) => void) => void }
+interface KakaoRegion { region_1depth_name: string; region_2depth_name: string; region_3depth_name: string; region_type: string }
+interface KakaoGeocoder { coord2RegionCode: (lng: number, lat: number, cb: (data: KakaoRegion[], status: string) => void) => void }
 
 const KAKAO_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY ?? ''
 
@@ -45,6 +47,7 @@ export default function TravelContent() {
   const [tripFormOpen, setTripFormOpen] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
   const [expandedTripId, setExpandedTripId] = useState<number | null>(null)
+  const [placeRegion, setPlaceRegion] = useState<string>('')
   const [calendarMonth, setCalendarMonth] = useState<{ year: number; month: number }>(() => {
     const now = new Date()
     return { year: now.getFullYear(), month: now.getMonth() }
@@ -116,6 +119,19 @@ export default function TravelContent() {
     drawMarkers(places, mapRef.current)
     fitBounds(places, mapRef.current)
   }, [selectedTripId, trips, selectedTrip, drawMarkers, fitBounds])
+
+  useEffect(() => {
+    if (panel?.type !== 'view') { setPlaceRegion(''); return }
+    if (!window.kakao?.maps?.services) return
+    const gc = new (window.kakao.maps.services as unknown as { Geocoder: new () => KakaoGeocoder }).Geocoder()
+    gc.coord2RegionCode(panel.place.lng, panel.place.lat, (data, status) => {
+      if (status !== 'OK') return
+      const b = data.find((r) => r.region_type === 'B')
+      if (!b) return
+      const parts = [b.region_2depth_name, b.region_3depth_name].filter(Boolean)
+      setPlaceRegion(parts.join(' '))
+    })
+  }, [panel])
 
   const handleSearch = () => {
     if (!query.trim() || !window.kakao?.maps?.services) return
@@ -425,6 +441,7 @@ export default function TravelContent() {
               {panel.place.photoData && (
                 <img src={panel.place.photoData} alt={panel.place.name} style={{ width: '100%', borderRadius: '12px', objectFit: 'cover', maxHeight: '200px' }} />
               )}
+              {placeRegion && <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>📍 {placeRegion}</p>}
               {panel.place.visitedAt && <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>📅 {panel.place.visitedAt}</p>}
               {panel.place.memo && <p style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.6, margin: 0 }}>{panel.place.memo}</p>}
               <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
