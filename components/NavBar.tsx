@@ -27,10 +27,28 @@ export default function NavBar() {
 
   const handleNotifClick = async () => {
     if (!('Notification' in window) || !('serviceWorker' in navigator)) return
+
+    if (notifStatus === 'granted') {
+      // 구독 해제
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      if (sub) {
+        await fetch('/api/push', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ endpoint: sub.endpoint }),
+        })
+        await sub.unsubscribe()
+      }
+      setNotifStatus('default')
+      return
+    }
+
     if (notifStatus === 'denied') {
       alert('알림이 차단되어 있어요. 브라우저 주소창 왼쪽 🔒 아이콘 → 알림 → 허용으로 변경해주세요.')
       return
     }
+
     const permission = await Notification.requestPermission()
     setNotifStatus(permission as 'default' | 'granted' | 'denied')
     if (permission !== 'granted') return
