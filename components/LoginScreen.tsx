@@ -20,6 +20,16 @@ export default function LoginScreen() {
     if (pin.length === 4) verifyPin()
   }, [pin])
 
+  useEffect(() => {
+    if (!selected) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') handleNum(e.key)
+      else if (e.key === 'Backspace') handleDel()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [selected, pin, loading])
+
   const verifyPin = async () => {
     setLoading(true)
     const res = await fetch('/api/auth', {
