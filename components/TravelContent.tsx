@@ -90,11 +90,11 @@ export default function TravelContent() {
 
   useEffect(() => {
     if (mapRef.current) return
-    if (window.kakao?.maps) { window.kakao.maps.load(() => initMap()); return }
+    if (window.kakao?.maps) { initMap(); return }
     const script = document.createElement('script')
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_KEY}&libraries=services&autoload=false`
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_KEY}&libraries=services`
     script.async = true
-    script.onload = () => window.kakao.maps.load(() => initMap())
+    script.onload = () => initMap()
     document.head.appendChild(script)
   }, [initMap])
 
