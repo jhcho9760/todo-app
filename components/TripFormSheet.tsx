@@ -43,11 +43,17 @@ const inputStyle: React.CSSProperties = {
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
 
+function parseDate(value: string): Date {
+  const parts = value.split('T')[0].split('-')
+  if (parts.length === 3) {
+    const y = parseInt(parts[0]), m = parseInt(parts[1]) - 1, d = parseInt(parts[2])
+    if (!isNaN(y) && !isNaN(m) && !isNaN(d)) return new Date(y, m, d)
+  }
+  return new Date()
+}
+
 function MiniCalendar({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
-  const today = new Date()
-  const initial = value
-    ? new Date(value + 'T00:00:00')
-    : today
+  const initial = value ? parseDate(value) : new Date()
   const [cal, setCal] = useState({ year: initial.getFullYear(), month: initial.getMonth() })
 
   const firstDay = new Date(cal.year, cal.month, 1).getDay()
