@@ -10,6 +10,7 @@ interface KakaoMap {
   setBounds: (bounds: KakaoBounds) => void
 }
 interface KakaoMarker { setMap: (map: KakaoMap | null) => void }
+interface KakaoOverlay { setMap: (map: KakaoMap | null) => void }
 interface KakaoPlace { place_name: string; y: string; x: string; address_name: string }
 interface KakaoPlaces { keywordSearch: (q: string, cb: (data: KakaoPlace[], status: string) => void) => void }
 interface KakaoRegion { region_1depth_name: string; region_2depth_name: string; region_3depth_name: string; region_type: string }
@@ -30,6 +31,7 @@ const inputStyle: React.CSSProperties = {
 export default function TravelContent() {
   const mapRef = useRef<KakaoMap | null>(null)
   const markersRef = useRef<Map<number, KakaoMarker>>(new Map())
+  const labelsRef = useRef<KakaoOverlay[]>([])
   const previewMarkerRef = useRef<KakaoMarker | null>(null)
 
   const [trips, setTrips] = useState<Trip[]>([])
@@ -65,16 +67,24 @@ export default function TravelContent() {
   const drawMarkers = useCallback((places: TripPlace[], map: KakaoMap) => {
     markersRef.current.forEach((m) => m.setMap(null))
     markersRef.current.clear()
+    labelsRef.current.forEach((l) => l.setMap(null))
+    labelsRef.current = []
     places.forEach((p) => {
-      const marker = new window.kakao.maps.Marker({
-        position: new window.kakao.maps.LatLng(p.lat, p.lng),
-        map,
-      })
+      const latlng = new window.kakao.maps.LatLng(p.lat, p.lng)
+      const marker = new window.kakao.maps.Marker({ position: latlng, map })
       window.kakao.maps.event.addListener(marker, 'click', () => {
         setPanel({ type: 'view', place: p })
         setResults([])
       })
       markersRef.current.set(p.id, marker)
+      const label = new window.kakao.maps.CustomOverlay({
+        position: latlng,
+        content: `<div style="background:#fff;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;color:#222;box-shadow:0 1px 4px rgba(0,0,0,0.18);white-space:nowrap;margin-bottom:4px;">${p.name}</div>`,
+        yAnchor: 2.4,
+        zIndex: 3,
+      })
+      label.setMap(map)
+      labelsRef.current.push(label)
     })
   }, [])
 
