@@ -342,6 +342,12 @@ export default function TravelContent() {
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
+            {selectedTrip && (
+              <button
+                onClick={() => { setEditingTrip(selectedTrip); setTripFormOpen(true) }}
+                style={{ backgroundColor: 'rgba(255,255,255,0.9)', color: '#333', fontSize: '16px', padding: '8px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+              >✏️</button>
+            )}
             <button
               onClick={() => { setEditingTrip(null); setTripFormOpen(true) }}
               style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
