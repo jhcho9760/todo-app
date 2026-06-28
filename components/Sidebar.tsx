@@ -15,6 +15,7 @@ const DIARY_ITEMS = [
   { label: '데이트 달력', href: '/diary' },
   { label: '데이트 가계부', href: '/ledger' },
   { label: '여행', href: '/travel' },
+  { label: '버킷리스트', href: '/bucket' },
 ]
 
 export default function Sidebar() {
@@ -22,7 +23,7 @@ export default function Sidebar() {
   const pathname = usePathname()
   const currentView = searchParams.get('view')
   const isDashboard = pathname === '/' && !currentView
-  const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel')
+  const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/bucket')
   const [todoOpen, setTodoOpen] = useState(true)
   const [diaryOpen, setDiaryOpen] = useState(true)
 
