@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { useTheme } from '@/components/ThemeProvider'
 import { useAuth } from '@/components/AuthProvider'
 
@@ -16,7 +17,37 @@ export default function NavBar() {
   const searchParams = useSearchParams()
   const currentView = searchParams.get('view') ?? 'month'
   const { theme, toggle } = useTheme()
-  const { userLabel, logout } = useAuth()
+  const { user, userLabel, logout } = useAuth()
+  const [notifStatus, setNotifStatus] = useState<'default' | 'granted' | 'denied' | 'unsupported'>('unsupported')
+
+  useEffect(() => {
+    if (!('Notification' in window)) return
+    setNotifStatus(Notification.permission as 'default' | 'granted' | 'denied')
+  }, [user])
+
+  const handleNotifClick = async () => {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return
+    if (notifStatus === 'denied') {
+      alert('알림이 차단되어 있어요. 브라우저 주소창 왼쪽 🔒 아이콘 → 알림 → 허용으로 변경해주세요.')
+      return
+    }
+    const permission = await Notification.requestPermission()
+    setNotifStatus(permission as 'default' | 'granted' | 'denied')
+    if (permission !== 'granted') return
+
+    const reg = await navigator.serviceWorker.ready
+    const res = await fetch('/api/push')
+    const { publicKey } = await res.json()
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicKey),
+    })
+    await fetch('/api/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, subscription: sub.toJSON() }),
+    })
+  }
 
   return (
     <nav
@@ -62,6 +93,30 @@ export default function NavBar() {
           </button>
         )}
 
+        {/* 알림 설정 */}
+        {user && notifStatus !== 'unsupported' && (
+          <button
+            onClick={handleNotifClick}
+            className="flex items-center justify-center rounded-full transition-colors"
+            style={{ width: '28px', height: '28px', backgroundColor: 'rgba(255,255,255,0.1)' }}
+            title={notifStatus === 'granted' ? '알림 켜짐' : '알림 켜기'}
+          >
+            {notifStatus === 'granted' ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="18" cy="5" r="3" fill="#34c759"/>
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#7a7a7a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#7a7a7a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="2" y1="2" x2="22" y2="22" stroke="#7a7a7a" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            )}
+          </button>
+        )}
+
         {/* 테마 토글 */}
         <button
           onClick={toggle}
@@ -90,4 +145,11 @@ export default function NavBar() {
       </div>
     </nav>
   )
+}
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = atob(base64)
+  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)))
 }
