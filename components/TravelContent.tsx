@@ -370,12 +370,6 @@ export default function TravelContent() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>위에서 여행을 선택하세요</p>
           </div>
         )}
-        {trips.length === 0 && (
-          <div className="flex md:hidden" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
-            <p style={{ fontSize: '32px', margin: '0 0 8px' }}>✈️</p>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>+ 새 여행을 눌러 첫 여행을 만들어보세요</p>
-          </div>
-        )}
       </div>
 
       {/* 모바일 바텀시트 — 장소 목록 */}
