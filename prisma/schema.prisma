@@ -67,6 +67,13 @@ model Trip {
   places       TripPlace[]
 }
 
+model DiaryComment {
+  id        Int      @id @default(autoincrement())
+  diaryDate String
+  content   String
+  createdAt DateTime @default(now())
+}
+
 model TripPlace {
   id        Int      @id @default(autoincrement())
   tripId    Int

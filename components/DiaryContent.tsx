@@ -23,6 +23,7 @@ const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
 
 interface EntryMeta { date: string; mood: string | null }
 interface EntryFull { date: string; title: string; content: string; mood: string | null; photos: string[]; updatedAt?: string }
+interface DiaryComment { id: number; diaryDate: string; content: string; createdAt: string }
 
 export default function DiaryContent() {
   const searchParams = useSearchParams()
@@ -50,6 +51,9 @@ export default function DiaryContent() {
   const [uploading, setUploading] = useState(false)
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [comments, setComments] = useState<DiaryComment[]>([])
+  const [commentInput, setCommentInput] = useState('')
+  const [commentSaving, setCommentSaving] = useState(false)
 
   const monthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`
 
@@ -62,7 +66,7 @@ export default function DiaryContent() {
   useEffect(() => { fetchMetas() }, [fetchMetas])
 
   useEffect(() => {
-    if (!selectedDate) { setEntry(null); return }
+    if (!selectedDate) { setEntry(null); setComments([]); return }
     fetch(`/api/diary/${selectedDate}`)
       .then((r) => r.json())
       .then((data) => {
@@ -73,7 +77,34 @@ export default function DiaryContent() {
         setEditPhotos(data?.photos ?? [])
         setDirty(false)
       })
+    fetch(`/api/diary/${selectedDate}/comments`)
+      .then((r) => r.json())
+      .then((data) => setComments(Array.isArray(data) ? data : []))
   }, [selectedDate])
+
+  const handleCommentSubmit = async () => {
+    if (!selectedDate || !commentInput.trim()) return
+    setCommentSaving(true)
+    const res = await fetch(`/api/diary/${selectedDate}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: commentInput.trim() }),
+    })
+    const created = await res.json()
+    setComments((prev) => [...prev, created])
+    setCommentInput('')
+    setCommentSaving(false)
+  }
+
+  const handleCommentDelete = async (id: number) => {
+    if (!selectedDate) return
+    await fetch(`/api/diary/${selectedDate}/comments`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    setComments((prev) => prev.filter((c) => c.id !== id))
+  }
 
   const handleDayClick = (dateStr: string) => {
     if (window.innerWidth < 768) {
@@ -372,6 +403,60 @@ export default function DiaryContent() {
               >
                 {saving ? '저장 중...' : '저장'}
               </button>
+            </div>
+
+            {/* 댓글 섹션 */}
+            <div className="mt-5 pt-4" style={{ borderTop: '1px solid var(--border-light)' }}>
+              <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '12px' }}>댓글</p>
+              {comments.length > 0 && (
+                <div className="flex flex-col gap-2 mb-3">
+                  {comments.map((c) => (
+                    <div key={c.id} className="flex items-start gap-2 group">
+                      <div
+                        className="flex-1 rounded-[10px] px-3 py-2"
+                        style={{ backgroundColor: 'var(--bg-hover)', fontSize: '14px', color: 'var(--text-primary)', lineHeight: '1.5' }}
+                      >
+                        {c.content}
+                      </div>
+                      <button
+                        onClick={() => handleCommentDelete(c.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+                        style={{ fontSize: '16px', color: '#b0b0b5', lineHeight: 1 }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input
+                  value={commentInput}
+                  onChange={(e) => setCommentInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCommentSubmit() } }}
+                  placeholder="댓글을 입력하세요..."
+                  className="flex-1 rounded-[10px] px-3 py-2 outline-none"
+                  style={{
+                    fontSize: '14px',
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'var(--bg-hover)',
+                    border: '1px solid var(--border-light)',
+                  }}
+                />
+                <button
+                  onClick={handleCommentSubmit}
+                  disabled={commentSaving || !commentInput.trim()}
+                  className="px-4 py-2 rounded-[10px] transition-colors"
+                  style={{
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    backgroundColor: commentInput.trim() ? '#0066cc' : 'var(--bg-hover)',
+                    color: commentInput.trim() ? '#ffffff' : '#b0b0b5',
+                  }}
+                >
+                  등록
+                </button>
+              </div>
             </div>
           </div>
         )}
