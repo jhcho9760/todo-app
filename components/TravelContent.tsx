@@ -425,19 +425,13 @@ export default function TravelContent() {
           {panel.type === 'view' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {panel.place.photoData && (
-                <img src={panel.place.photoData} alt={panel.place.name} style={{ width: '100%', borderRadius: '12px', objectFit: 'cover', maxHeight: '180px' }} />
+                <img src={panel.place.photoData} alt={panel.place.name} style={{ width: '100%', borderRadius: '12px', objectFit: 'cover', maxHeight: '200px' }} />
               )}
               {panel.place.visitedAt && <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>📅 {panel.place.visitedAt}</p>}
               {panel.place.memo && <p style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.6, margin: 0 }}>{panel.place.memo}</p>}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
                 <button onClick={() => { setPanel({ type: 'edit', place: panel.place }); setForm({ name: panel.place.name, memo: panel.place.memo, visitedAt: panel.place.visitedAt ?? '', photoData: panel.place.photoData ?? '' }) }} style={{ flex: 1, padding: '8px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none', cursor: 'pointer' }}>수정</button>
                 <button onClick={() => handleDelete(panel.place)} style={{ flex: 1, padding: '8px', borderRadius: '100px', fontSize: '14px', fontWeight: 600, backgroundColor: 'rgba(255,59,48,0.1)', color: '#ff3b30', border: 'none', cursor: 'pointer' }}>삭제</button>
-                {panel.place.photoData && selectedTrip.coverPlaceId !== panel.place.id && (
-                  <button onClick={() => handleSetCover(panel.place.id)} style={{ width: '100%', padding: '8px', borderRadius: '100px', fontSize: '13px', fontWeight: 500, backgroundColor: 'var(--bg-hover)', color: 'var(--text-secondary)', border: 'none', cursor: 'pointer' }}>이 사진을 커버로 설정</button>
-                )}
-                {selectedTrip.coverPlaceId === panel.place.id && (
-                  <p style={{ width: '100%', textAlign: 'center', fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>✓ 커버 사진</p>
-                )}
               </div>
             </div>
           )}
