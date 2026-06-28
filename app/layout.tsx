@@ -5,6 +5,7 @@ import Sidebar from '@/components/Sidebar'
 import MobileSidebar from '@/components/MobileSidebar'
 import InstallPrompt from '@/components/InstallPrompt'
 import ThemeProvider from '@/components/ThemeProvider'
+import AuthProvider from '@/components/AuthProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
       </head>
       <body className="min-h-screen theme-bg-page">
+        <AuthProvider>
         <ThemeProvider>
           <Suspense fallback={
             <nav
@@ -59,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
           <InstallPrompt />
         </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   )

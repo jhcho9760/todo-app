@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useTheme } from '@/components/ThemeProvider'
+import { useAuth } from '@/components/AuthProvider'
 
 const NAV_ITEMS = [
   { label: '오늘',   view: 'today' },
@@ -15,6 +16,7 @@ export default function NavBar() {
   const searchParams = useSearchParams()
   const currentView = searchParams.get('view') ?? 'month'
   const { theme, toggle } = useTheme()
+  const { userLabel, logout } = useAuth()
 
   return (
     <nav
@@ -42,6 +44,23 @@ export default function NavBar() {
             {label}
           </Link>
         ))}
+
+        {/* 로그인 유저 + 로그아웃 */}
+        {userLabel && (
+          <button
+            onClick={logout}
+            className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
+            style={{ fontSize: '12px', color: '#ffffff' }}
+            title="로그아웃"
+          >
+            <span>{userLabel}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="16 17 21 12 16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        )}
 
         {/* 테마 토글 */}
         <button
