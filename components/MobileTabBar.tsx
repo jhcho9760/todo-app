@@ -10,7 +10,6 @@ export default function MobileTabBar() {
   const isDiary = pathname.startsWith('/diary')
   const isLedger = pathname.startsWith('/ledger')
   const isTravel = pathname.startsWith('/travel')
-  const isBucket = pathname.startsWith('/bucket')
   const isAnniversary = pathname.startsWith('/anniversary')
   const isDashboard = pathname === '/' && !view
 
@@ -107,16 +106,6 @@ export default function MobileTabBar() {
           <path d="M4 5H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M4 8H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           <circle cx="17" cy="6.5" r="2" stroke="currentColor" strokeWidth="1.3" />
-        </svg>
-      ),
-    },
-    {
-      label: '버킷',
-      href: '/bucket',
-      active: isBucket,
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M11 2.5L13.09 8.26L19.18 8.27L14.54 11.74L16.18 17.5L11 14.5L5.82 17.5L7.46 11.74L2.82 8.27L8.91 8.26L11 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
         </svg>
       ),
     },

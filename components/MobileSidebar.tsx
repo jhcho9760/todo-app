@@ -15,7 +15,6 @@ const DIARY_ITEMS = [
   { label: '데이트 달력', href: '/diary' },
   { label: '데이트 가계부', href: '/ledger' },
   { label: '여행', href: '/travel' },
-  { label: '버킷리스트', href: '/bucket' },
   { label: '기념일', href: '/anniversary' },
   { label: '우리 리스트', href: '/wishlist' },
   { label: '사진 앨범', href: '/album' },
@@ -28,7 +27,7 @@ export default function MobileSidebar() {
   const currentView = searchParams.get('view')
   const currentOwner = searchParams.get('owner')
   const isDashboard = pathname === '/' && !currentView
-  const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/bucket') || pathname.startsWith('/anniversary') || pathname.startsWith('/wishlist') || pathname.startsWith('/album')
+  const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/anniversary') || pathname.startsWith('/wishlist') || pathname.startsWith('/album')
   const [nayunOpen, setNayunOpen] = useState(true)
   const [junhyungOpen, setJunhyungOpen] = useState(true)
   const [diaryOpen, setDiaryOpen] = useState(true)
