@@ -10,7 +10,6 @@ import TodoForm from './TodoForm'
 interface Props {
   date: Date
   todos: Todo[]
-  noDateTodos: Todo[]
   onWeekChange: (date: Date) => void
   onUpdate: (id: number, data: UpdateTodoInput) => void
   onDelete: (id: number) => void
@@ -19,9 +18,8 @@ interface Props {
 
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
 
-export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChange, onUpdate, onDelete, onCreate }: Props) {
+export default function CalendarWeekView({ date, todos, onWeekChange, onUpdate, onDelete, onCreate }: Props) {
   const [addingDate, setAddingDate] = useState<string | null>(null)
-  const [showNoDate, setShowNoDate] = useState(false)
   const days = getWeekDays(date)
 
   const weekLabel = `${days[0].getFullYear()}년 ${days[0].getMonth() + 1}월 ${Math.ceil(days[0].getDate() / 7)}주차`
@@ -117,31 +115,6 @@ export default function CalendarWeekView({ date, todos, noDateTodos, onWeekChang
         </div>
       )}
 
-      <div
-        className="overflow-hidden"
-        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px' }}
-      >
-        <button
-          onClick={() => setShowNoDate(!showNoDate)}
-          className="w-full flex items-center justify-between px-5 py-4"
-        >
-          <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>날짜 미정</span>
-          <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-            {noDateTodos.length}개 {showNoDate ? '▲' : '▼'}
-          </span>
-        </button>
-        {showNoDate && (
-          <div className="divide-y" style={{ borderColor: 'var(--border-light)', borderTop: '1px solid var(--border-light)' }}>
-            {noDateTodos.length === 0 ? (
-              <p className="px-5 py-4" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없음</p>
-            ) : (
-              noDateTodos.map((todo) => (
-                <TodoItem key={todo.id} todo={todo} onUpdate={onUpdate} onDelete={onDelete} />
-              ))
-            )}
-          </div>
-        )}
-      </div>
     </div>
   )
 }

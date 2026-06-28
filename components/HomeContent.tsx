@@ -55,25 +55,14 @@ export default function HomeContent() {
 
   const [currentDate, setCurrentDate] = useState(() => getDateForView(view, dateParam))
   const [todos, setTodos] = useState<Todo[]>([])
-  const [noDateTodos, setNoDateTodos] = useState<Todo[]>([])
 
   const fetchTodos = useCallback(async () => {
     const range = getDateRange(view, currentDate)
-
-    const [rangeRes, noDateRes] = await Promise.all([
-      range
-        ? fetch(`/api/todos?dateFrom=${range.dateFrom}&dateTo=${range.dateTo}`)
-        : Promise.resolve({ json: async () => [] } as unknown as Response),
-      fetch('/api/todos?noDate=true'),
-    ])
-
-    const [rangeData, noDateData] = await Promise.all([
-      rangeRes.json(),
-      noDateRes.json(),
-    ])
-
-    setTodos(Array.isArray(rangeData) ? rangeData : [])
-    setNoDateTodos(Array.isArray(noDateData) ? noDateData : [])
+    const res = range
+      ? await fetch(`/api/todos?dateFrom=${range.dateFrom}&dateTo=${range.dateTo}`)
+      : { json: async () => [] } as unknown as Response
+    const data = await res.json()
+    setTodos(Array.isArray(data) ? data : [])
   }, [view, currentDate])
 
   useEffect(() => {
@@ -139,7 +128,6 @@ export default function HomeContent() {
         <CalendarMonthView
           date={currentDate}
           todos={todos}
-          noDateTodos={noDateTodos}
           onMonthChange={setCurrentDate}
           onDayClick={handleDayClick}
         />
@@ -148,7 +136,6 @@ export default function HomeContent() {
         <CalendarWeekView
           date={currentDate}
           todos={todos}
-          noDateTodos={noDateTodos}
           onWeekChange={setCurrentDate}
           onUpdate={handleUpdate}
           onDelete={handleDelete}
@@ -159,7 +146,6 @@ export default function HomeContent() {
         <CalendarDayView
           date={currentDate}
           todos={todos}
-          noDateTodos={noDateTodos}
           onUpdate={handleUpdate}
           onDelete={handleDelete}
           onCreate={handleCreate}

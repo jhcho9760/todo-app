@@ -8,15 +8,13 @@ import CalendarHeader from './CalendarHeader'
 interface Props {
   date: Date
   todos: Todo[]
-  noDateTodos: Todo[]
   onMonthChange: (date: Date) => void
   onDayClick: (dateStr: string) => void
 }
 
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
 
-export default function CalendarMonthView({ date, todos, noDateTodos, onMonthChange, onDayClick }: Props) {
-  const [showNoDate, setShowNoDate] = useState(false)
+export default function CalendarMonthView({ date, todos, onMonthChange, onDayClick }: Props) {
   const grid = getMonthGrid(date.getFullYear(), date.getMonth())
   const label = `${date.getFullYear()}년 ${date.getMonth() + 1}월`
 
@@ -130,35 +128,6 @@ export default function CalendarMonthView({ date, todos, noDateTodos, onMonthCha
         ))}
       </div>
 
-      {/* 날짜 미정 섹션 */}
-      <div className="overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px' }}>
-        <button
-          onClick={() => setShowNoDate(!showNoDate)}
-          className="w-full flex items-center justify-between px-5 py-4"
-        >
-          <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>날짜 미정</span>
-          <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{noDateTodos.length}개 {showNoDate ? '▲' : '▼'}</span>
-        </button>
-        {showNoDate && (
-          <div style={{ borderTop: '1px solid var(--border-light)' }}>
-            {noDateTodos.length === 0 ? (
-              <p className="px-5 py-4" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없음</p>
-            ) : (
-              <div className="px-5 py-3 space-y-1">
-                {noDateTodos.map((todo) => (
-                  <div
-                    key={todo.id}
-                    className="text-sm px-3 py-2 rounded-lg"
-                    style={{ backgroundColor: 'var(--bg-hover)', color: 'var(--text-primary)' }}
-                  >
-                    {todo.title}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
     </div>
   )
 }
