@@ -8,10 +8,11 @@ type User = 'nayun' | 'junhyung' | null
 interface AuthContextValue {
   user: User
   userLabel: string
+  login: (u: 'nayun' | 'junhyung') => void
   logout: () => void
 }
 
-const AuthContext = createContext<AuthContextValue>({ user: null, userLabel: '', logout: () => {} })
+const AuthContext = createContext<AuthContextValue>({ user: null, userLabel: '', login: () => {}, logout: () => {} })
 
 export function useAuth() { return useContext(AuthContext) }
 
@@ -32,6 +33,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     if (!user && pathname !== '/login') router.replace('/login')
   }, [ready, user, pathname, router])
 
+  const login = useCallback((u: 'nayun' | 'junhyung') => {
+    localStorage.setItem('currentUser', u)
+    setUser(u)
+    router.replace('/')
+  }, [router])
+
   const logout = useCallback(() => {
     localStorage.removeItem('currentUser')
     setUser(null)
@@ -44,7 +51,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   if (!user && pathname !== '/login') return null
 
   return (
-    <AuthContext.Provider value={{ user, userLabel, logout }}>
+    <AuthContext.Provider value={{ user, userLabel, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

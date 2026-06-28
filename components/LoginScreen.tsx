@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useAuth } from '@/components/AuthProvider'
 
 const USERS = [
   { key: 'nayun', label: '나윤', emoji: '🌸' },
@@ -9,7 +9,7 @@ const USERS = [
 ]
 
 export default function LoginScreen() {
-  const router = useRouter()
+  const { login } = useAuth()
   const [selected, setSelected] = useState<string | null>(null)
   const [pin, setPin] = useState('')
   const [error, setError] = useState('')
@@ -29,8 +29,7 @@ export default function LoginScreen() {
     })
     const data = await res.json()
     if (data.ok) {
-      localStorage.setItem('currentUser', selected!)
-      router.replace('/')
+      login(selected as 'nayun' | 'junhyung')
     } else {
       setShake(true)
       setError('PIN이 틀렸어요')
