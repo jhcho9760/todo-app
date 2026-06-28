@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db'
 export async function GET() {
   const trips = await prisma.trip.findMany({
     orderBy: { startDate: 'desc' },
-    include: { places: true },
+    include: { places: { orderBy: { visitedAt: 'asc' } } },
   })
   return NextResponse.json(trips)
 }
