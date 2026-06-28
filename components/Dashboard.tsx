@@ -6,7 +6,7 @@ import { Todo } from '@/types/todo'
 import { toDateStr } from '@/lib/calendar'
 
 const PRIORITY_COLOR: Record<string, string> = { HIGH: '#ff3b30', MEDIUM: '#ff9500', LOW: '#7a7a7a' }
-const MOOD_EMOJI: Record<string, string> = { great: '😄', good: '🙂', neutral: '😐', bad: '😔', awful: '😢' }
+const MOOD_EMOJI: Record<string, string> = { great: '😄', good: '🙂', neutral: '😐', bad: '😔', awful: '😢', heart: '❤️', fire: '❤️‍🔥' }
 
 function getWeatherInfo(code: number): { label: string; emoji: string } {
   if (code === 0) return { label: '맑음', emoji: '☀️' }
