@@ -19,7 +19,7 @@ interface KakaoGeocoder { coord2RegionCode: (lng: number, lat: number, cb: (data
 const KAKAO_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY ?? ''
 
 const inputStyle: React.CSSProperties = {
-  fontSize: '14px',
+  fontSize: '16px',
   backgroundColor: 'var(--bg-hover)',
   color: 'var(--text-primary)',
   borderRadius: '8px',
