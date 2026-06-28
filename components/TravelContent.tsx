@@ -364,14 +364,14 @@ export default function TravelContent() {
         {/* 지도 */}
         <div id="travelmap" style={{ width: '100%', height: '100%' }} />
 
-        {/* 선택된 여행 없을 때 안내 */}
+        {/* 선택된 여행 없을 때 안내 (모바일만 — 데스크톱은 사이드바가 안내) */}
         {!selectedTrip && trips.length > 0 && (
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+          <div className="flex md:hidden" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>위에서 여행을 선택하세요</p>
           </div>
         )}
         {trips.length === 0 && (
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+          <div className="flex md:hidden" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '20px 28px', textAlign: 'center', zIndex: 5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
             <p style={{ fontSize: '32px', margin: '0 0 8px' }}>✈️</p>
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>+ 새 여행을 눌러 첫 여행을 만들어보세요</p>
           </div>
