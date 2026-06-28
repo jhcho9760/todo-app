@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Todo, CreateTodoInput, UpdateTodoInput } from '@/types/todo'
 import { useAuth } from '@/components/AuthProvider'
@@ -111,18 +111,31 @@ export default function HomeContent() {
     : `${ownerLabel}의 월간`
 
   const allDone = todos.length > 0 && todos.every((t) => t.completed)
+  const [showDone, setShowDone] = useState(false)
+  const prevAllDone = useRef(false)
+
+  useEffect(() => {
+    if (allDone && !prevAllDone.current) setShowDone(true)
+    prevAllDone.current = allDone
+  }, [allDone])
 
   return (
     <main className="max-w-3xl mx-auto px-4 md:px-6" style={{ paddingBottom: '80px' }}>
-      {/* 참 잘했어요 배너 */}
-      {allDone && (
+      {/* 참 잘했어요 전체화면 */}
+      {showDone && (
         <div
-          className="flex flex-col items-center justify-center py-5 mb-4 mt-4 rounded-[18px]"
-          style={{ backgroundColor: 'rgba(52,199,89,0.1)', border: '1px solid rgba(52,199,89,0.3)' }}
+          onClick={() => setShowDone(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 100,
+            backgroundColor: 'rgba(0,0,0,0.75)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer',
+          }}
         >
-          <span style={{ fontSize: '36px', marginBottom: '6px' }}>🎉</span>
-          <p style={{ fontSize: '18px', fontWeight: 700, color: '#34c759' }}>참 잘했어요!</p>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px' }}>할 일을 모두 완료했어요</p>
+          <span style={{ fontSize: '72px', marginBottom: '16px' }}>🎉</span>
+          <p style={{ fontSize: '28px', fontWeight: 700, color: '#34c759', marginBottom: '8px' }}>참 잘했어요!</p>
+          <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.6)' }}>할 일을 모두 완료했어요</p>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.35)', marginTop: '32px' }}>탭해서 닫기</p>
         </div>
       )}
 
