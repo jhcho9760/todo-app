@@ -43,25 +43,39 @@ const inputStyle: React.CSSProperties = {
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
 
-function parseDate(value: string): Date {
-  const parts = value.split('T')[0].split('-')
-  if (parts.length === 3) {
-    const y = parseInt(parts[0]), m = parseInt(parts[1]) - 1, d = parseInt(parts[2])
-    if (!isNaN(y) && !isNaN(m) && !isNaN(d)) return new Date(y, m, d)
-  }
-  return new Date()
+function toYMD(value: string): string {
+  if (!value) return ''
+  return value.split('T')[0]
 }
 
 function MiniCalendar({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
-  const initial = value ? parseDate(value) : new Date()
-  const [cal, setCal] = useState({ year: initial.getFullYear(), month: initial.getMonth() })
+  const safeValue = toYMD(value)
+  const [year, setYear] = useState(() => {
+    if (!safeValue) return new Date().getFullYear()
+    const y = parseInt(safeValue.split('-')[0])
+    return isNaN(y) ? new Date().getFullYear() : y
+  })
+  const [month, setMonth] = useState(() => {
+    if (!safeValue) return new Date().getMonth()
+    const m = parseInt(safeValue.split('-')[1]) - 1
+    return isNaN(m) ? new Date().getMonth() : m
+  })
 
-  const firstDay = new Date(cal.year, cal.month, 1).getDay()
-  const daysInMonth = new Date(cal.year, cal.month + 1, 0).getDate()
-  const cells: (number | null)[] = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
+  const firstDay = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const cells: (number | null)[] = [
+    ...Array(firstDay).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ]
 
-  const prevMonth = () => setCal(({ year: y, month: m }) => m === 0 ? { year: y - 1, month: 11 } : { year: y, month: m - 1 })
-  const nextMonth = () => setCal(({ year: y, month: m }) => m === 11 ? { year: y + 1, month: 0 } : { year: y, month: m + 1 })
+  const prevMonth = () => {
+    if (month === 0) { setYear(y => y - 1); setMonth(11) }
+    else setMonth(m => m - 1)
+  }
+  const nextMonth = () => {
+    if (month === 11) { setYear(y => y + 1); setMonth(0) }
+    else setMonth(m => m + 1)
+  }
 
   return (
     <div>
@@ -69,27 +83,35 @@ function MiniCalendar({ value, onChange, label }: { value: string; onChange: (v:
       <div style={{ backgroundColor: 'var(--bg-hover)', borderRadius: '10px', padding: '10px', fontSize: '13px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
           <button type="button" onClick={prevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '16px', padding: '0 4px' }}>‹</button>
-          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cal.year}년 {cal.month + 1}월</span>
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{year}년 {month + 1}월</span>
           <button type="button" onClick={nextMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '16px', padding: '0 4px' }}>›</button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center' }}>
-          {DAYS.map((d) => <div key={d} style={{ color: 'var(--text-secondary)', fontSize: '11px', padding: '2px 0' }}>{d}</div>)}
+          {DAYS.map((d) => (
+            <div key={d} style={{ color: 'var(--text-secondary)', fontSize: '11px', padding: '2px 0' }}>{d}</div>
+          ))}
           {cells.map((day, i) => {
             if (!day) return <div key={i} />
-            const dateStr = `${cal.year}-${String(cal.month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-            const isSelected = value === dateStr
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+            const isSelected = safeValue === dateStr
             return (
               <button
                 key={i}
                 type="button"
                 onClick={() => onChange(isSelected ? '' : dateStr)}
-                style={{ padding: '4px 0', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: isSelected ? 700 : 400, backgroundColor: isSelected ? '#0066cc' : 'transparent', color: isSelected ? '#fff' : 'var(--text-primary)', fontSize: '13px' }}
+                style={{
+                  padding: '4px 0', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                  fontWeight: isSelected ? 700 : 400,
+                  backgroundColor: isSelected ? '#0066cc' : 'transparent',
+                  color: isSelected ? '#fff' : 'var(--text-primary)',
+                  fontSize: '13px',
+                }}
               >{day}</button>
             )
           })}
         </div>
-        {value && (
-          <p style={{ marginTop: '6px', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>📅 {value}</p>
+        {safeValue && (
+          <p style={{ marginTop: '6px', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>📅 {safeValue}</p>
         )}
       </div>
     </div>
@@ -98,8 +120,8 @@ function MiniCalendar({ value, onChange, label }: { value: string; onChange: (v:
 
 export default function TripFormSheet({ trip, onSave, onClose }: Props) {
   const [name, setName] = useState(trip?.name ?? '')
-  const [startDate, setStartDate] = useState(trip?.startDate ?? '')
-  const [endDate, setEndDate] = useState(trip?.endDate ?? '')
+  const [startDate, setStartDate] = useState(() => toYMD(trip?.startDate ?? ''))
+  const [endDate, setEndDate] = useState(() => toYMD(trip?.endDate ?? ''))
   const [memo, setMemo] = useState(trip?.memo ?? '')
   const [saving, setSaving] = useState(false)
 
@@ -157,7 +179,8 @@ export default function TripFormSheet({ trip, onSave, onClose }: Props) {
         disabled={saving || !name || !startDate}
         style={{
           width: '100%', padding: '10px', borderRadius: '100px',
-          fontSize: '14px', fontWeight: 600, border: 'none', cursor: (name && startDate) ? 'pointer' : 'default',
+          fontSize: '14px', fontWeight: 600, border: 'none',
+          cursor: (name && startDate) ? 'pointer' : 'default',
           backgroundColor: (name && startDate) ? '#0066cc' : 'var(--bg-hover)',
           color: (name && startDate) ? '#fff' : '#b0b0b5',
         }}
