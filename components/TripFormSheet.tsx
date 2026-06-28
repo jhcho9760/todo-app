@@ -58,11 +58,13 @@ function MiniCalendar({ value, onChange, label }: { value: string; onChange: (v:
   const [month, setMonth] = useState(() => {
     if (!safeValue) return new Date().getMonth()
     const m = parseInt(safeValue.split('-')[1]) - 1
-    return isNaN(m) ? new Date().getMonth() : m
+    return (isNaN(m) || m < 0 || m > 11) ? new Date().getMonth() : m
   })
 
-  const firstDay = new Date(year, month, 1).getDay()
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const rawFirstDay = new Date(year, month, 1).getDay()
+  const firstDay = isNaN(rawFirstDay) || rawFirstDay < 0 ? 0 : rawFirstDay
+  const rawDaysInMonth = new Date(year, month + 1, 0).getDate()
+  const daysInMonth = isNaN(rawDaysInMonth) || rawDaysInMonth < 1 ? 30 : rawDaysInMonth
   const cells: (number | null)[] = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),

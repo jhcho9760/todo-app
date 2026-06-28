@@ -468,8 +468,10 @@ export default function TravelContent() {
               {/* 인라인 달력 */}
               {(() => {
                 const { year, month } = calendarMonth
-                const firstDay = new Date(year, month, 1).getDay()
-                const daysInMonth = new Date(year, month + 1, 0).getDate()
+                const rawFirstDay = new Date(year, month, 1).getDay()
+                const firstDay = isNaN(rawFirstDay) || rawFirstDay < 0 ? 0 : rawFirstDay
+                const rawDaysInMonth = new Date(year, month + 1, 0).getDate()
+                const daysInMonth = isNaN(rawDaysInMonth) || rawDaysInMonth < 1 ? 30 : rawDaysInMonth
                 const cells: (number | null)[] = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
                 const monthLabel = `${year}년 ${month + 1}월`
                 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
