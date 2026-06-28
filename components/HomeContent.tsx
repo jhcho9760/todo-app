@@ -110,8 +110,22 @@ export default function HomeContent() {
     : view === 'week' ? `${ownerLabel}의 주간`
     : `${ownerLabel}의 월간`
 
+  const allDone = todos.length > 0 && todos.every((t) => t.completed)
+
   return (
     <main className="max-w-3xl mx-auto px-4 md:px-6" style={{ paddingBottom: '80px' }}>
+      {/* 참 잘했어요 배너 */}
+      {allDone && (
+        <div
+          className="flex flex-col items-center justify-center py-5 mb-4 mt-4 rounded-[18px]"
+          style={{ backgroundColor: 'rgba(52,199,89,0.1)', border: '1px solid rgba(52,199,89,0.3)' }}
+        >
+          <span style={{ fontSize: '36px', marginBottom: '6px' }}>🎉</span>
+          <p style={{ fontSize: '18px', fontWeight: 700, color: '#34c759' }}>참 잘했어요!</p>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px' }}>할 일을 모두 완료했어요</p>
+        </div>
+      )}
+
       {/* 상단 헤더 */}
       <div className="px-1 pt-6 md:pt-10 pb-6 md:pb-8 mb-4 md:mb-6">
         <h1
@@ -122,9 +136,9 @@ export default function HomeContent() {
         </h1>
         <p
           className="mt-2 font-normal"
-          style={{ fontSize: '15px', lineHeight: '1.47', letterSpacing: '-0.374px', color: '#0066cc' }}
+          style={{ fontSize: '15px', lineHeight: '1.47', letterSpacing: '-0.374px', color: allDone ? '#34c759' : '#0066cc' }}
         >
-          {todos.filter((t) => !t.completed).length}개 남음
+          {allDone ? '모두 완료! ✓' : `${todos.filter((t) => !t.completed).length}개 남음`}
         </p>
       </div>
 
