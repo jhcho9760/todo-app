@@ -377,7 +377,7 @@ export default function Dashboard() {
         {/* 🦁 준형 우선순위 */}
         <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>🦁 준형 할 일</h2>
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>🦁 준형 우선순위</h2>
             <span className="px-2 py-0.5 rounded-full" style={{ fontSize: '12px', color: 'var(--text-secondary)', backgroundColor: 'var(--bg-hover)' }}>
               {junhyungHighPriority.length}개
             </span>
