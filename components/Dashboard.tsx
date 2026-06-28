@@ -314,14 +314,20 @@ export default function Dashboard() {
               const [y, m, d] = date.split('-').map(Number)
               const dateLabel = new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })
               return (
-                <Link
+                <button
                   key={date}
-                  href={`/diary?date=${date}`}
-                  className="flex items-center gap-3 py-2 rounded-[10px] px-3 transition-colors hover:bg-[#f5f5f7]"
+                  onClick={() => {
+                    if (window.innerWidth < 768) {
+                      window.location.href = `/diary/edit?date=${date}`
+                    } else {
+                      window.location.href = `/diary?date=${date}`
+                    }
+                  }}
+                  className="w-full flex items-center gap-3 py-2 rounded-[10px] px-3 transition-colors hover:bg-[#f5f5f7]"
                 >
                   <span style={{ fontSize: '20px' }}>{mood ? MOOD_EMOJI[mood] : '📝'}</span>
                   <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{dateLabel}</span>
-                </Link>
+                </button>
               )
             })}
           </div>
