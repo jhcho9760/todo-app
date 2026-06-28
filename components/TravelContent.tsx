@@ -45,6 +45,10 @@ export default function TravelContent() {
   const [tripFormOpen, setTripFormOpen] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
   const [expandedTripId, setExpandedTripId] = useState<number | null>(null)
+  const [calendarMonth, setCalendarMonth] = useState<{ year: number; month: number }>(() => {
+    const now = new Date()
+    return { year: now.getFullYear(), month: now.getMonth() }
+  })
 
   const selectedTrip = trips.find((t) => t.id === selectedTripId) ?? null
 
@@ -434,7 +438,43 @@ export default function TravelContent() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="장소명" style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }} />
               <input value={form.memo} onChange={(e) => setForm((f) => ({ ...f, memo: e.target.value }))} placeholder="메모 (선택)" style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }} />
-              <input value={form.visitedAt} onChange={(e) => setForm((f) => ({ ...f, visitedAt: e.target.value }))} placeholder="방문일 (YYYY-MM-DD, 선택)" style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }} />
+              {/* 인라인 달력 */}
+              {(() => {
+                const { year, month } = calendarMonth
+                const firstDay = new Date(year, month, 1).getDay()
+                const daysInMonth = new Date(year, month + 1, 0).getDate()
+                const cells: (number | null)[] = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
+                const monthLabel = `${year}년 ${month + 1}월`
+                const DAYS = ['일', '월', '화', '수', '목', '금', '토']
+                return (
+                  <div style={{ backgroundColor: 'var(--bg-hover)', borderRadius: '10px', padding: '10px', fontSize: '13px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <button type="button" onClick={() => setCalendarMonth(({ year: y, month: m }) => m === 0 ? { year: y - 1, month: 11 } : { year: y, month: m - 1 })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '16px', padding: '0 4px' }}>‹</button>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{monthLabel}</span>
+                      <button type="button" onClick={() => setCalendarMonth(({ year: y, month: m }) => m === 11 ? { year: y + 1, month: 0 } : { year: y, month: m + 1 })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '16px', padding: '0 4px' }}>›</button>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center' }}>
+                      {DAYS.map((d) => <div key={d} style={{ color: 'var(--text-secondary)', fontSize: '11px', padding: '2px 0' }}>{d}</div>)}
+                      {cells.map((day, i) => {
+                        if (!day) return <div key={i} />
+                        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                        const isSelected = form.visitedAt === dateStr
+                        return (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setForm((f) => ({ ...f, visitedAt: isSelected ? '' : dateStr }))}
+                            style={{ padding: '4px 0', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: isSelected ? 700 : 400, backgroundColor: isSelected ? '#0066cc' : 'transparent', color: isSelected ? '#fff' : 'var(--text-primary)', fontSize: '13px' }}
+                          >{day}</button>
+                        )
+                      })}
+                    </div>
+                    {form.visitedAt && (
+                      <p style={{ marginTop: '6px', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>📅 {form.visitedAt}</p>
+                    )}
+                  </div>
+                )
+              })()}
               <div>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>사진 (선택)</p>
                 <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ fontSize: '13px', color: 'var(--text-secondary)' }} />
