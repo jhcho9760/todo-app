@@ -65,7 +65,7 @@ export default function DiaryEditor() {
     })
     setSaving(false)
     setDirty(false)
-    router.back()
+    router.push(`/diary?date=${date}`)
   }
 
   const handleDelete = async () => {
@@ -110,7 +110,7 @@ export default function DiaryEditor() {
       {/* 상단 네비 */}
       <div className="flex items-center justify-between mb-6">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push(`/diary?date=${date}`)}
           className="flex items-center gap-1"
           style={{ fontSize: '16px', color: '#0066cc' }}
         >
