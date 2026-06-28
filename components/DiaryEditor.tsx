@@ -18,6 +18,7 @@ const getDriveImageUrl = (fileId: string) =>
   `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`
 
 interface Entry { date: string; title: string; content: string; mood: string | null; photos: string[]; updatedAt?: string }
+interface DiaryComment { id: number; diaryDate: string; content: string; createdAt: string }
 
 export default function DiaryEditor() {
   const searchParams = useSearchParams()
@@ -34,6 +35,9 @@ export default function DiaryEditor() {
   const [uploading, setUploading] = useState(false)
   const [lightbox, setLightbox] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [comments, setComments] = useState<DiaryComment[]>([])
+  const [commentInput, setCommentInput] = useState('')
+  const [commentSaving, setCommentSaving] = useState(false)
 
   const dateLabel = (() => {
     const [y, m, d] = date.split('-').map(Number)
@@ -54,7 +58,33 @@ export default function DiaryEditor() {
           setPhotos(data.photos ?? [])
         }
       })
+    fetch(`/api/diary/${date}/comments`)
+      .then((r) => r.json())
+      .then((data) => setComments(Array.isArray(data) ? data : []))
   }, [date])
+
+  const handleCommentSubmit = async () => {
+    if (!commentInput.trim()) return
+    setCommentSaving(true)
+    const res = await fetch(`/api/diary/${date}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: commentInput.trim() }),
+    })
+    const created = await res.json()
+    setComments((prev) => [...prev, created])
+    setCommentInput('')
+    setCommentSaving(false)
+  }
+
+  const handleCommentDelete = async (id: number) => {
+    await fetch(`/api/diary/${date}/comments`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    setComments((prev) => prev.filter((c) => c.id !== id))
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -232,6 +262,60 @@ export default function DiaryEditor() {
         </svg>
         {uploading ? '업로드 중...' : '사진 추가'}
       </button>
+
+      {/* 댓글 섹션 */}
+      <div className="mt-6 pt-5" style={{ borderTop: '1px solid var(--border-light)' }}>
+        <p className="mb-3" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>댓글</p>
+        {comments.length > 0 && (
+          <div className="flex flex-col gap-2 mb-3">
+            {comments.map((c) => (
+              <div key={c.id} className="flex items-start gap-2">
+                <div
+                  className="flex-1 rounded-[10px] px-3 py-2"
+                  style={{ backgroundColor: 'var(--bg-hover)', fontSize: '15px', color: 'var(--text-primary)', lineHeight: '1.5' }}
+                >
+                  {c.content}
+                </div>
+                <button
+                  onClick={() => handleCommentDelete(c.id)}
+                  className="mt-1 w-7 h-7 flex items-center justify-center rounded-full"
+                  style={{ fontSize: '18px', color: '#b0b0b5', backgroundColor: 'var(--bg-hover)' }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <input
+            value={commentInput}
+            onChange={(e) => setCommentInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCommentSubmit() } }}
+            placeholder="댓글을 입력하세요..."
+            className="flex-1 rounded-[10px] px-3 py-2 outline-none"
+            style={{
+              fontSize: '15px',
+              color: 'var(--text-primary)',
+              backgroundColor: 'var(--bg-hover)',
+              border: '1px solid var(--border-light)',
+            }}
+          />
+          <button
+            onClick={handleCommentSubmit}
+            disabled={commentSaving || !commentInput.trim()}
+            className="px-4 py-2 rounded-[10px]"
+            style={{
+              fontSize: '14px',
+              fontWeight: 600,
+              backgroundColor: commentInput.trim() ? '#0066cc' : 'var(--bg-hover)',
+              color: commentInput.trim() ? '#ffffff' : '#b0b0b5',
+            }}
+          >
+            등록
+          </button>
+        </div>
+      </div>
 
       {/* 라이트박스 */}
       {lightbox && (
