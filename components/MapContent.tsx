@@ -9,6 +9,7 @@ declare global {
         load: (callback: () => void) => void
         Map: new (container: HTMLElement, options: object) => KakaoMap
         LatLng: new (lat: number, lng: number) => KakaoLatLng
+        LatLngBounds: new () => KakaoBounds
         Marker: new (options: object) => KakaoMarker
         CustomOverlay: new (options: object) => KakaoOverlay
         event: {
@@ -23,8 +24,9 @@ declare global {
   }
 }
 interface KakaoLatLng { getLat: () => number; getLng: () => number }
+interface KakaoBounds { extend: (latlng: KakaoLatLng) => void }
 interface KakaoMouseEvent { latLng: KakaoLatLng }
-interface KakaoMap { setCenter: (latlng: KakaoLatLng) => void }
+interface KakaoMap { setCenter: (latlng: KakaoLatLng) => void; setBounds: (bounds: KakaoBounds) => void }
 interface KakaoMarker { setMap: (map: KakaoMap | null) => void }
 interface KakaoOverlay { setMap: (map: KakaoMap | null) => void }
 interface KakaoPlace { place_name: string; y: string; x: string; address_name: string }

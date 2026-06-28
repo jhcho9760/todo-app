@@ -4,8 +4,11 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import TripFormSheet, { Trip, TripPlace } from './TripFormSheet'
 
 interface KakaoLatLng { getLat: () => number; getLng: () => number }
-interface KakaoMouseEvent { latLng: KakaoLatLng }
-interface KakaoMap { setCenter: (latlng: KakaoLatLng) => void }
+interface KakaoBounds { extend: (latlng: KakaoLatLng) => void }
+interface KakaoMap {
+  setCenter: (latlng: KakaoLatLng) => void
+  setBounds: (bounds: KakaoBounds) => void
+}
 interface KakaoMarker { setMap: (map: KakaoMap | null) => void }
 interface KakaoPlace { place_name: string; y: string; x: string; address_name: string }
 interface KakaoPlaces { keywordSearch: (q: string, cb: (data: KakaoPlace[], status: string) => void) => void }
@@ -67,6 +70,16 @@ export default function TravelContent() {
     })
   }, [])
 
+  const fitBounds = useCallback((places: TripPlace[], map: KakaoMap) => {
+    if (places.length === 0) {
+      map.setCenter(new window.kakao.maps.LatLng(37.5665, 126.978))
+      return
+    }
+    const bounds = new window.kakao.maps.LatLngBounds()
+    places.forEach((p) => bounds.extend(new window.kakao.maps.LatLng(p.lat, p.lng)))
+    map.setBounds(bounds)
+  }, [])
+
   const initMap = useCallback(() => {
     if (!window.kakao?.maps || mapRef.current) return
     const container = document.getElementById('travelmap')
@@ -76,16 +89,6 @@ export default function TravelContent() {
       level: 5,
     })
     mapRef.current = map
-    window.kakao.maps.event.addListener(map, 'click', (e: KakaoMouseEvent) => {
-      const lat = e.latLng.getLat()
-      const lng = e.latLng.getLng()
-      previewMarkerRef.current?.setMap(null)
-      const marker = new window.kakao.maps.Marker({ position: e.latLng, map })
-      previewMarkerRef.current = marker
-      setPanel({ type: 'add', lat, lng })
-      setForm({ name: '', memo: '', visitedAt: '', photoData: '' })
-      setResults([])
-    })
   }, [])
 
   useEffect(() => {
@@ -106,7 +109,8 @@ export default function TravelContent() {
     if (!mapRef.current) return
     const places = selectedTrip?.places ?? []
     drawMarkers(places, mapRef.current)
-  }, [selectedTripId, trips, selectedTrip, drawMarkers])
+    fitBounds(places, mapRef.current)
+  }, [selectedTripId, trips, selectedTrip, drawMarkers, fitBounds])
 
   const handleSearch = () => {
     if (!query.trim() || !window.kakao?.maps?.services) return
