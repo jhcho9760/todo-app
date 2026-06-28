@@ -23,6 +23,7 @@ function getWeatherInfo(code: number): { label: string; emoji: string } {
 
 interface WeatherData { temp: number; label: string; emoji: string; city: string }
 interface DiaryMeta { date: string; mood: string | null; content: string }
+interface LedgerSummary { byPerson: Record<string, number>; total: number }
 
 function calcDday(startDate: string): { days: number; label: string } | null {
   if (!startDate) return null
@@ -45,6 +46,8 @@ export default function Dashboard() {
   const [startDate, setStartDate] = useState('')
   const [editingDate, setEditingDate] = useState(false)
   const [dateInput, setDateInput] = useState('')
+  const [monthDateCount, setMonthDateCount] = useState(0)
+  const [ledger, setLedger] = useState<LedgerSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [now, setNow] = useState(new Date())
@@ -79,20 +82,27 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const [todayRes, allRes, diaryRes, configRes] = await Promise.all([
+      const monthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
+      const [todayRes, allRes, diaryRes, configRes, monthDiaryRes, ledgerRes] = await Promise.all([
         fetch(`/api/todos?dateFrom=${today}&dateTo=${today}`),
         fetch('/api/todos'),
         fetch('/api/diary'),
         fetch('/api/config'),
+        fetch(`/api/diary?month=${monthKey}`),
+        fetch(`/api/ledger?month=${monthKey}`),
       ])
-      const [todayData, allData, diaryData, configData] = await Promise.all([
-        todayRes.json(), allRes.json(), diaryRes.json(), configRes.json(),
+      const [todayData, allData, diaryData, configData, monthDiaryData, ledgerData] = await Promise.all([
+        todayRes.json(), allRes.json(), diaryRes.json(), configRes.json(), monthDiaryRes.json(), ledgerRes.json(),
       ])
       setTodayTodos(Array.isArray(todayData) ? todayData : [])
       setAllTodos(Array.isArray(allData) ? allData : [])
-      // 최근 일기 5개 (content 포함하여 재조회)
       const metas: DiaryMeta[] = Array.isArray(diaryData) ? diaryData.slice(0, 5) : []
       setRecentDiary(metas)
+      setMonthDateCount(Array.isArray(monthDiaryData) ? monthDiaryData.length : 0)
+      if (ledgerData?.byPerson) {
+        const total = Object.values(ledgerData.byPerson as Record<string, number>).reduce((a, b) => a + b, 0)
+        setLedger({ byPerson: ledgerData.byPerson, total })
+      }
       const sd = configData?.relationship_start ?? ''
       setStartDate(sd)
       setDateInput(sd)
@@ -224,6 +234,48 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* 이번 달 요약 */}
+      <div className="grid grid-cols-2 gap-3 md:gap-4 mb-6">
+        {/* 이번 달 데이트 횟수 */}
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+            {new Date().getMonth() + 1}월 데이트
+          </p>
+          <p className="font-semibold" style={{ fontSize: '36px', color: '#ff6b9d', letterSpacing: '-1px', lineHeight: 1 }}>
+            {monthDateCount}<span style={{ fontSize: '16px', fontWeight: 400, marginLeft: '4px' }}>회</span>
+          </p>
+          <Link href="/diary" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px', display: 'block' }}>
+            달력 보기 →
+          </Link>
+        </div>
+
+        {/* 이번 달 지출 */}
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+            {new Date().getMonth() + 1}월 지출
+          </p>
+          {ledger ? (
+            <>
+              <p className="font-semibold" style={{ fontSize: '24px', color: 'var(--text-primary)', letterSpacing: '-0.5px', lineHeight: 1 }}>
+                {ledger.total.toLocaleString()}<span style={{ fontSize: '14px', fontWeight: 400, marginLeft: '2px' }}>원</span>
+              </p>
+              <div className="mt-2 flex flex-col gap-0.5">
+                {Object.entries(ledger.byPerson).map(([name, amt]) => (
+                  <p key={name} style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                    {name} {(amt as number).toLocaleString()}원
+                  </p>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p style={{ fontSize: '22px', fontWeight: 600, color: 'var(--text-secondary)' }}>0원</p>
+          )}
+          <Link href="/ledger" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px', display: 'block' }}>
+            가계부 보기 →
+          </Link>
+        </div>
+      </div>
 
       {/* 업무 통계 */}
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">

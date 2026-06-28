@@ -75,6 +75,16 @@ model DiaryComment {
   createdAt DateTime @default(now())
 }
 
+model WishlistItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  memo        String   @default("")
+  completed   Boolean  @default(false)
+  completedAt String?
+  createdAt   DateTime @default(now())
+}
+
 model Anniversary {
   id        Int      @id @default(autoincrement())
   name      String

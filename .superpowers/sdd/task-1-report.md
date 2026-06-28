@@ -1,63 +1,21 @@
-# Task 1 Report: Prisma 스키마 — Trip / TripPlace 모델 추가
+## Task 1 Report
 
-## Status
-✅ **DONE**
+### 구현 내용 요약
+- **Step 1**: `TravelContent.tsx` 상단 인터페이스 교체 — `KakaoBounds` 추가, `KakaoMouseEvent` 제거, `KakaoMap`에 `setBounds` 추가
+- **Step 2**: `initMap` 콜백에서 지도 클릭 이벤트 리스너 블록 전체 삭제
+- **Step 3**: `drawMarkers` 아래에 `fitBounds` useCallback 추가 — 장소 없으면 서울 중심으로, 있으면 모든 마커를 포함하도록 `LatLngBounds` 사용
+- **Step 4**: `selectedTripId` 변경 useEffect에서 `fitBounds` 호출 추가
+- **부수 변경**: `MapContent.tsx`의 공유 `declare global` Window 타입에 `KakaoBounds`, `LatLngBounds`, `setBounds` 추가 (TravelContent.tsx가 동일 TS 프로젝트의 글로벌 타입을 공유하므로 필요)
 
-## Completed Work
+### 변경 파일 목록
+- `components/TravelContent.tsx`
+- `components/MapContent.tsx` (Window 글로벌 타입 확장)
 
-### Step 1: Schema 모델 추가 ✅
-- Added `Trip` model with fields: `id`, `name`, `startDate`, `endDate`, `memo`, `coverPlaceId`, `createdAt`, `places` (relationship)
-- Added `TripPlace` model with fields: `id`, `tripId`, `name`, `lat`, `lng`, `memo`, `visitedAt`, `photoData`, `createdAt`, `trip` (relationship)
-- Both models added to end of `prisma/schema.prisma` without modifying existing models
-- File: `C:\Users\IIS-IDT-N-0093-U\Desktop\개발\To-Do\prisma\schema.prisma`
+### 빌드 결과 (npx tsc --noEmit)
+```
+.next/types/validator.ts(215,39): error TS2307: Cannot find module '../../app/api/tmap-search/route.js' or its corresponding type declarations.
+```
+이 에러는 작업 전부터 존재하던 pre-existing 에러 (tmap-search API 라우트 관련, 본 태스크와 무관). TravelContent.tsx 관련 타입 에러 없음.
 
-### Step 2: 마이그레이션 생성 ✅
-- Created migration directory: `prisma/migrations/20260628000000_add_trip/`
-- Generated migration SQL file with proper PostgreSQL DDL:
-  - `Trip` table with SERIAL PRIMARY KEY and appropriate data types
-  - `TripPlace` table with SERIAL PRIMARY KEY and FOREIGN KEY constraint (CASCADE delete)
-  - All default values and NOT NULL constraints properly configured
-
-### Step 3: Prisma 클라이언트 재생성 ✅
-- Successfully executed: `npx prisma generate`
-- Output: `✔ Generated Prisma Client (7.8.0) to .\app\generated\prisma in 105ms`
-- Verified types are available:
-  - `Trip` type exported as `Prisma.TripModel`
-  - `TripPlace` type exported as `Prisma.TripPlaceModel`
-  - Relationship types properly generated
-
-### Step 4: 커밋 ✅
-- Commit hash: `cdfc02b`
-- Commit message: `feat: Trip, TripPlace Prisma 모델 추가`
-- Files committed:
-  - `prisma/schema.prisma` (models added)
-  - `prisma/migrations/20260628000000_add_trip/migration.sql` (migration created)
-
-## Technical Details
-
-### Schema Validation
-- ✅ Trip model includes all required fields as per spec
-- ✅ TripPlace model includes all required fields and proper foreign key relationship
-- ✅ CASCADE delete configured for TripPlace when Trip is deleted
-- ✅ Default values properly set (empty string for memo, timestamps for createdAt)
-- ✅ Optional fields marked with `?` (endDate, coverPlaceId, visitedAt, photoData)
-
-### Migration SQL
-- ✅ PostgreSQL compatible syntax
-- ✅ SERIAL PRIMARY KEY for auto-incrementing IDs
-- ✅ DOUBLE PRECISION for lat/lng coordinates
-- ✅ TEXT fields for strings with appropriate defaults
-- ✅ TIMESTAMP(3) with DEFAULT CURRENT_TIMESTAMP for createdAt
-- ✅ Foreign key constraint with ON DELETE CASCADE
-
-### Prisma Client Generation
-- ✅ Client regenerated without errors
-- ✅ Types properly exported for both models
-- ✅ Relationship metadata correctly embedded in generated code
-- ✅ Output directory: `app/generated/prisma` (as configured)
-
-## Test Summary
-✅ Models added correctly | ✅ Schema validated | ✅ Client generated | ✅ Migration created | ✅ Commit successful
-
-## Concerns
-None. Task completed successfully within constraints. Migration files are ready for deployment to a PostgreSQL database.
+### 커밋 해시
+`a56df87` — feat: 카카오맵 fit bounds 추가, 지도 클릭 핀 추가 제거
