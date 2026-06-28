@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useSearchParams, usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-const TODO_ITEMS = [
+const TODO_VIEWS = [
   { label: '오늘', view: 'today' },
   { label: '다음날', view: 'tomorrow' },
   { label: '주', view: 'week' },
@@ -22,9 +22,11 @@ export default function Sidebar() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const currentView = searchParams.get('view')
+  const currentOwner = searchParams.get('owner')
   const isDashboard = pathname === '/' && !currentView
   const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/bucket')
-  const [todoOpen, setTodoOpen] = useState(true)
+  const [nayunOpen, setNayunOpen] = useState(true)
+  const [junhyungOpen, setJunhyungOpen] = useState(true)
   const [diaryOpen, setDiaryOpen] = useState(true)
 
   return (
@@ -64,26 +66,39 @@ export default function Sidebar() {
 
       <div style={{ height: '1px', backgroundColor: 'var(--border)', margin: '0 12px 12px' }} />
 
-      {/* 업무 To-Do 섹션 */}
-      <SectionHeader label="업무 To-Do" open={todoOpen} onToggle={() => setTodoOpen(!todoOpen)} />
-      {todoOpen && (
+      {/* 나윤's 업무 To-Do */}
+      <SectionHeader label="나윤's 업무 To-Do" open={nayunOpen} onToggle={() => setNayunOpen(!nayunOpen)} />
+      {nayunOpen && (
         <nav className="mt-1 flex flex-col gap-0.5 px-2 mb-3">
-          {TODO_ITEMS.map(({ label, view }) => {
-            const active = currentView === view && !isDiary
+          {TODO_VIEWS.map(({ label, view }) => {
+            const active = currentView === view && currentOwner !== 'junhyung' && !isDiary
             return (
-              <Link
-                key={view}
-                href={`/?view=${view}`}
+              <Link key={view} href={`/?view=${view}&owner=nayun`}
                 className="flex items-center gap-2 px-3 py-2 rounded-[8px] transition-colors"
-                style={{
-                  fontSize: '14px',
-                  fontWeight: active ? 600 : 400,
-                  color: active ? '#0066cc' : 'var(--text-primary)',
-                  backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
-                }}
+                style={{ fontSize: '14px', fontWeight: active ? 600 : 400, color: active ? '#0066cc' : 'var(--text-primary)', backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent' }}
               >
-                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+      )}
+
+      <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '4px 12px 12px' }} />
+
+      {/* 준형's 업무 To-Do */}
+      <SectionHeader label="준형's 업무 To-Do" open={junhyungOpen} onToggle={() => setJunhyungOpen(!junhyungOpen)} />
+      {junhyungOpen && (
+        <nav className="mt-1 flex flex-col gap-0.5 px-2 mb-3">
+          {TODO_VIEWS.map(({ label, view }) => {
+            const active = currentView === view && currentOwner === 'junhyung' && !isDiary
+            return (
+              <Link key={view} href={`/?view=${view}&owner=junhyung`}
+                className="flex items-center gap-2 px-3 py-2 rounded-[8px] transition-colors"
+                style={{ fontSize: '14px', fontWeight: active ? 600 : 400, color: active ? '#0066cc' : 'var(--text-primary)', backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent' }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
                 {label}
               </Link>
             )

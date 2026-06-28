@@ -11,9 +11,11 @@ export async function GET(request: NextRequest) {
   const dateFrom  = searchParams.get('dateFrom')
   const dateTo    = searchParams.get('dateTo')
   const noDate    = searchParams.get('noDate')
+  const owner     = searchParams.get('owner')
 
   const todos = await prisma.todo.findMany({
     where: {
+      ...(owner && { owner }),
       ...(search && {
         OR: [
           { title: { contains: search } },
@@ -57,6 +59,7 @@ export async function POST(request: NextRequest) {
       dueDate: body.dueDate ? new Date(body.dueDate) : null,
       category: body.category ?? null,
       tags: JSON.stringify(body.tags ?? []),
+      owner: body.owner ?? 'nayun',
     },
   })
 

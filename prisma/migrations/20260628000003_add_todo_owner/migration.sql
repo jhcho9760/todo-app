@@ -1,0 +1,1 @@
+ALTER TABLE "Todo" ADD COLUMN "owner" TEXT NOT NULL DEFAULT 'nayun';

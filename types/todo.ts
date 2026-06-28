@@ -9,6 +9,7 @@ export interface Todo {
   dueDate: string | null
   category: string | null
   tags: string[]
+  owner: string
   createdAt: string
   updatedAt: string
 }
@@ -20,6 +21,7 @@ export interface CreateTodoInput {
   dueDate?: string
   category?: string
   tags?: string[]
+  owner?: string
 }
 
 export interface UpdateTodoInput {

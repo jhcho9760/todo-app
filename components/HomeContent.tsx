@@ -52,6 +52,7 @@ export default function HomeContent() {
 
   const view = (searchParams.get('view') ?? 'month') as View
   const dateParam = searchParams.get('date')
+  const owner = searchParams.get('owner') ?? 'nayun'
 
   const [currentDate, setCurrentDate] = useState(() => getDateForView(view, dateParam))
   const [todos, setTodos] = useState<Todo[]>([])
@@ -59,11 +60,11 @@ export default function HomeContent() {
   const fetchTodos = useCallback(async () => {
     const range = getDateRange(view, currentDate)
     const res = range
-      ? await fetch(`/api/todos?dateFrom=${range.dateFrom}&dateTo=${range.dateTo}`)
+      ? await fetch(`/api/todos?dateFrom=${range.dateFrom}&dateTo=${range.dateTo}&owner=${owner}`)
       : { json: async () => [] } as unknown as Response
     const data = await res.json()
     setTodos(Array.isArray(data) ? data : [])
-  }, [view, currentDate])
+  }, [view, currentDate, owner])
 
   useEffect(() => {
     setCurrentDate(getDateForView(view, dateParam))
@@ -77,7 +78,7 @@ export default function HomeContent() {
     await fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, owner }),
     })
     fetchTodos()
   }
@@ -97,14 +98,15 @@ export default function HomeContent() {
   }
 
   const handleDayClick = (dateStr: string) => {
-    router.push(`/?view=today&date=${dateStr}`)
+    router.push(`/?view=today&owner=${owner}&date=${dateStr}`)
   }
 
+  const ownerLabel = owner === 'junhyung' ? '준형' : '나윤'
   const headerTitle = view === 'today'
-    ? (dateParam ? parseDateParam(dateParam).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) : '오늘')
-    : view === 'tomorrow' ? '다음날'
-    : view === 'week' ? '주간'
-    : '월간'
+    ? (dateParam ? parseDateParam(dateParam).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) : `${ownerLabel}의 오늘`)
+    : view === 'tomorrow' ? `${ownerLabel}의 다음날`
+    : view === 'week' ? `${ownerLabel}의 주간`
+    : `${ownerLabel}의 월간`
 
   return (
     <main className="max-w-3xl mx-auto px-4 md:px-6" style={{ paddingBottom: '80px' }}>
