@@ -1,4 +1,5 @@
-declare const self: ServiceWorkerGlobalScope
+export {}
+declare let self: ServiceWorkerGlobalScope
 
 self.addEventListener('push', (event) => {
   if (!event.data) return
