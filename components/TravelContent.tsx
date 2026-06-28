@@ -504,7 +504,7 @@ export default function TravelContent() {
               })()}
               <div>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>사진 (선택)</p>
-                <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ fontSize: '13px', color: 'var(--text-secondary)' }} />
+                <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ fontSize: '16px', color: 'var(--text-secondary)' }} />
                 {form.photoData && <img src={form.photoData} alt="preview" style={{ marginTop: '8px', width: '100%', borderRadius: '8px', objectFit: 'cover', maxHeight: '120px' }} />}
               </div>
               <button

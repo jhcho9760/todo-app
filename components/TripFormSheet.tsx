@@ -30,7 +30,7 @@ interface Props {
 }
 
 const inputStyle: React.CSSProperties = {
-  fontSize: '14px',
+  fontSize: '16px',
   backgroundColor: 'var(--bg-hover)',
   color: 'var(--text-primary)',
   borderRadius: '8px',
