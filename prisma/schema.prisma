@@ -12,6 +12,14 @@ model AppConfig {
   value String
 }
 
+model PushSubscription {
+  id       Int    @id @default(autoincrement())
+  user     String
+  endpoint String @unique
+  p256dh   String
+  auth     String
+}
+
 model DiaryEntry {
   id        Int      @id @default(autoincrement())
   date      String   @unique

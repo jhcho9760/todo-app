@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/components/AuthProvider'
 
 interface WishlistItem {
   id: number; title: string; category: string; memo: string
@@ -18,6 +19,7 @@ const CATEGORIES = [
 const getCat = (key: string) => CATEGORIES.find((c) => c.key === key) ?? CATEGORIES[4]
 
 export default function WishlistContent() {
+  const { user } = useAuth()
   const [items, setItems] = useState<WishlistItem[]>([])
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [showDone, setShowDone] = useState(false)
@@ -48,7 +50,7 @@ export default function WishlistContent() {
       const res = await fetch('/api/wishlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), category, memo: memo.trim() }),
+        body: JSON.stringify({ title: title.trim(), category, memo: memo.trim(), actor: user }),
       })
       const created = await res.json()
       setItems((prev) => [created, ...prev])
@@ -60,7 +62,7 @@ export default function WishlistContent() {
     const res = await fetch('/api/wishlist', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: item.id, completed: !item.completed }),
+      body: JSON.stringify({ id: item.id, completed: !item.completed, actor: user }),
     })
     const updated = await res.json()
     setItems((prev) => prev.map((i) => (i.id === item.id ? updated : i)))
@@ -153,11 +155,12 @@ export default function WishlistContent() {
             const cat = getCat(item.category)
             return (
               <div key={item.id}
-                className="flex items-start gap-3 rounded-[14px] px-4 py-3 group"
+                className="flex items-start gap-3 rounded-[14px] px-4 py-3 group cursor-pointer"
                 style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}
+                onClick={() => openEdit(item)}
               >
                 <button
-                  onClick={() => handleToggle(item)}
+                  onClick={(e) => { e.stopPropagation(); handleToggle(item) }}
                   className="flex-shrink-0 mt-0.5 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
                   style={{ backgroundColor: item.completed ? '#0066cc' : 'transparent', border: item.completed ? '2px solid #0066cc' : '2px solid var(--border)' }}
                 >
@@ -182,16 +185,11 @@ export default function WishlistContent() {
                     <p style={{ fontSize: '11px', color: '#34c759', marginTop: '4px' }}>✓ {item.completedAt} 완료</p>
                   )}
                 </div>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => openEdit(item)}
-                    style={{ fontSize: '12px', color: '#0066cc', fontWeight: 600 }}
-                  >수정</button>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    style={{ fontSize: '18px', color: '#b0b0b5', lineHeight: 1 }}
-                  >×</button>
-                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDelete(item.id) }}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity mt-0.5"
+                  style={{ fontSize: '18px', color: '#b0b0b5', lineHeight: 1 }}
+                >×</button>
               </div>
             )
           })}

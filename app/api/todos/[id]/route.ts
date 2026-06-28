@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { UpdateTodoInput } from '@/types/todo'
+import { sendPush, otherUser, userLabel } from '@/lib/push'
 
 export async function PATCH(
   request: NextRequest,
@@ -8,7 +9,7 @@ export async function PATCH(
 ) {
   const { id: idStr } = await params
   const id = parseInt(idStr)
-  const body: UpdateTodoInput = await request.json()
+  const body: UpdateTodoInput & { actor?: string } = await request.json()
 
   const todo = await prisma.todo.update({
     where: { id },
@@ -24,6 +25,10 @@ export async function PATCH(
       ...(body.tags !== undefined && { tags: JSON.stringify(body.tags) }),
     },
   })
+
+  if (body.actor && body.completed === true) {
+    sendPush(otherUser(body.actor), `${userLabel(body.actor)}이 할 일을 완료했어요 ✅`, todo.title).catch(() => {})
+  }
 
   return NextResponse.json({ ...todo, tags: JSON.parse(todo.tags) })
 }

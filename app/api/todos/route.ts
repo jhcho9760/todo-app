@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { CreateTodoInput } from '@/types/todo'
+import { sendPush, otherUser, userLabel } from '@/lib/push'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const body: CreateTodoInput = await request.json()
+  const body: CreateTodoInput & { actor?: string } = await request.json()
 
   if (!body.title?.trim()) {
     return NextResponse.json({ error: 'title is required' }, { status: 400 })
@@ -62,6 +63,10 @@ export async function POST(request: NextRequest) {
       owner: body.owner ?? 'nayun',
     },
   })
+
+  if (body.actor) {
+    sendPush(otherUser(body.actor), `${userLabel(body.actor)}이 할 일을 추가했어요 📝`, body.title.trim()).catch(() => {})
+  }
 
   return NextResponse.json({ ...todo, tags: JSON.parse(todo.tags) }, { status: 201 })
 }

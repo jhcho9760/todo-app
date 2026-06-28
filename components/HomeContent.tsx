@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Todo, CreateTodoInput, UpdateTodoInput } from '@/types/todo'
+import { useAuth } from '@/components/AuthProvider'
 import { toDateStr } from '@/lib/calendar'
 import CalendarMonthView from '@/components/CalendarMonthView'
 import CalendarWeekView from '@/components/CalendarWeekView'
@@ -49,6 +50,7 @@ function getDateRange(view: View, date: Date): { dateFrom: string; dateTo: strin
 export default function HomeContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { user } = useAuth()
 
   const view = (searchParams.get('view') ?? 'month') as View
   const dateParam = searchParams.get('date')
@@ -78,7 +80,7 @@ export default function HomeContent() {
     await fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, owner }),
+      body: JSON.stringify({ ...data, owner, actor: user }),
     })
     fetchTodos()
   }
@@ -87,7 +89,7 @@ export default function HomeContent() {
     await fetch(`/api/todos/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, actor: user }),
     })
     fetchTodos()
   }
