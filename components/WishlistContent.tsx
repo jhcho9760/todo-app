@@ -22,6 +22,7 @@ export default function WishlistContent() {
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [showDone, setShowDone] = useState(false)
   const [showForm, setShowForm] = useState(false)
+  const [editItem, setEditItem] = useState<WishlistItem | null>(null)
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('movie')
   const [memo, setMemo] = useState('')
@@ -30,16 +31,29 @@ export default function WishlistContent() {
     fetch('/api/wishlist').then((r) => r.json()).then((data) => setItems(Array.isArray(data) ? data : []))
   }, [])
 
-  const handleAdd = async () => {
+  const openAdd = () => { setEditItem(null); setTitle(''); setMemo(''); setCategory('movie'); setShowForm(true) }
+  const openEdit = (item: WishlistItem) => { setEditItem(item); setTitle(item.title); setMemo(item.memo); setCategory(item.category); setShowForm(true) }
+
+  const handleSubmit = async () => {
     if (!title.trim()) return
-    const res = await fetch('/api/wishlist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title.trim(), category, memo: memo.trim() }),
-    })
-    const created = await res.json()
-    setItems((prev) => [created, ...prev])
-    setTitle(''); setMemo(''); setShowForm(false)
+    if (editItem) {
+      const res = await fetch('/api/wishlist', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editItem.id, title: title.trim(), category, memo: memo.trim() }),
+      })
+      const updated = await res.json()
+      setItems((prev) => prev.map((i) => (i.id === updated.id ? updated : i)))
+    } else {
+      const res = await fetch('/api/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title.trim(), category, memo: memo.trim() }),
+      })
+      const created = await res.json()
+      setItems((prev) => [created, ...prev])
+    }
+    setTitle(''); setMemo(''); setShowForm(false); setEditItem(null)
   }
 
   const handleToggle = async (item: WishlistItem) => {
@@ -80,7 +94,7 @@ export default function WishlistContent() {
           <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginTop: '4px' }}>같이 하고 싶은 것들</p>
         </div>
         <button
-          onClick={() => { setTitle(''); setMemo(''); setCategory('movie'); setShowForm(true) }}
+          onClick={openAdd}
           className="flex items-center gap-1.5 px-4 py-2 rounded-full"
           style={{ backgroundColor: '#0066cc', color: '#ffffff', fontSize: '14px', fontWeight: 600 }}
         >
@@ -168,11 +182,16 @@ export default function WishlistContent() {
                     <p style={{ fontSize: '11px', color: '#34c759', marginTop: '4px' }}>✓ {item.completedAt} 완료</p>
                   )}
                 </div>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity mt-0.5"
-                  style={{ fontSize: '18px', color: '#b0b0b5', lineHeight: 1 }}
-                >×</button>
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => openEdit(item)}
+                    style={{ fontSize: '12px', color: '#0066cc', fontWeight: 600 }}
+                  >수정</button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    style={{ fontSize: '18px', color: '#b0b0b5', lineHeight: 1 }}
+                  >×</button>
+                </div>
               </div>
             )
           })}
@@ -189,7 +208,7 @@ export default function WishlistContent() {
             style={{ backgroundColor: 'var(--bg-card)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="mb-4" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>항목 추가</h2>
+            <h2 className="mb-4" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{editItem ? '항목 수정' : '항목 추가'}</h2>
 
             {/* 카테고리 */}
             <div className="flex gap-2 flex-wrap mb-4">
@@ -215,13 +234,13 @@ export default function WishlistContent() {
             />
 
             <div className="flex gap-2">
-              <button onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-[12px]"
+              <button onClick={() => { setShowForm(false); setEditItem(null) }} className="flex-1 py-3 rounded-[12px]"
                 style={{ fontSize: '15px', fontWeight: 600, backgroundColor: 'var(--bg-hover)', color: 'var(--text-secondary)' }}>
                 취소
               </button>
-              <button onClick={handleAdd} disabled={!title.trim()} className="flex-1 py-3 rounded-[12px]"
+              <button onClick={handleSubmit} disabled={!title.trim()} className="flex-1 py-3 rounded-[12px]"
                 style={{ fontSize: '15px', fontWeight: 600, backgroundColor: title.trim() ? '#0066cc' : 'var(--bg-hover)', color: title.trim() ? '#fff' : '#b0b0b5' }}>
-                추가
+                {editItem ? '저장' : '추가'}
               </button>
             </div>
           </div>

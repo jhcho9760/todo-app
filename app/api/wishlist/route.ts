@@ -14,9 +14,10 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const { id, completed, title, memo } = await request.json()
+  const { id, completed, title, category, memo } = await request.json()
   const data: Record<string, unknown> = {}
   if (title !== undefined) data.title = title
+  if (category !== undefined) data.category = category
   if (memo !== undefined) data.memo = memo
   if (completed !== undefined) {
     data.completed = completed
