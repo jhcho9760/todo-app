@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { sendPush, otherUser, userLabel } from '@/lib/push'
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ date: string }> }) {
   const { date } = await params
@@ -10,7 +11,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ date: 
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ date: string }> }) {
   const { date } = await params
-  const { title, content, mood, photos } = await request.json()
+  const { title, content, mood, photos, actor } = await request.json()
 
   const photosJson = photos !== undefined ? JSON.stringify(photos) : undefined
 
@@ -24,6 +25,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     },
     create: { date, title: title ?? '', content: content ?? '', mood: mood ?? null, photos: photosJson ?? '[]' },
   })
+
+  if (actor) {
+    sendPush(otherUser(actor), `${userLabel(actor)}이 일기를 썼어요 📖`, `${date} — ${title || '제목 없음'}`).catch(() => {})
+  }
 
   return NextResponse.json({ ...entry, photos: JSON.parse(entry.photos) })
 }

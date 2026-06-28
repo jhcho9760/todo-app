@@ -40,7 +40,8 @@ function calcDday(startDate: string): { days: number; label: string } | null {
 }
 
 export default function Dashboard() {
-  const [todayTodos, setTodayTodos] = useState<Todo[]>([])
+  const [nayunTodos, setNayunTodos] = useState<Todo[]>([])
+  const [junhyungTodos, setJunhyungTodos] = useState<Todo[]>([])
   const [allTodos, setAllTodos] = useState<Todo[]>([])
   const [recentDiary, setRecentDiary] = useState<DiaryMeta[]>([])
   const [startDate, setStartDate] = useState('')
@@ -83,18 +84,20 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAll = async () => {
       const monthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
-      const [todayRes, allRes, diaryRes, configRes, monthDiaryRes, ledgerRes] = await Promise.all([
-        fetch(`/api/todos?dateFrom=${today}&dateTo=${today}`),
+      const [todayRes, junhyungTodayRes, allRes, diaryRes, configRes, monthDiaryRes, ledgerRes] = await Promise.all([
+        fetch(`/api/todos?dateFrom=${today}&dateTo=${today}&owner=nayun`),
+        fetch(`/api/todos?dateFrom=${today}&dateTo=${today}&owner=junhyung`),
         fetch('/api/todos'),
         fetch('/api/diary'),
         fetch('/api/config'),
         fetch(`/api/diary?month=${monthKey}`),
         fetch(`/api/ledger?month=${monthKey}`),
       ])
-      const [todayData, allData, diaryData, configData, monthDiaryData, ledgerData] = await Promise.all([
-        todayRes.json(), allRes.json(), diaryRes.json(), configRes.json(), monthDiaryRes.json(), ledgerRes.json(),
+      const [todayData, junhyungTodayData, allData, diaryData, configData, monthDiaryData, ledgerData] = await Promise.all([
+        todayRes.json(), junhyungTodayRes.json(), allRes.json(), diaryRes.json(), configRes.json(), monthDiaryRes.json(), ledgerRes.json(),
       ])
-      setTodayTodos(Array.isArray(todayData) ? todayData : [])
+      setNayunTodos(Array.isArray(todayData) ? todayData : [])
+      setJunhyungTodos(Array.isArray(junhyungTodayData) ? junhyungTodayData : [])
       setAllTodos(Array.isArray(allData) ? allData : [])
       const metas: DiaryMeta[] = Array.isArray(diaryData) ? diaryData.slice(0, 5) : []
       setRecentDiary(metas)
@@ -125,7 +128,8 @@ export default function Dashboard() {
   const completed = allTodos.filter((t) => t.completed).length
   const incomplete = total - completed
   const highPriority = allTodos.filter((t) => t.priority === 'HIGH' && !t.completed)
-  const todayIncomplete = todayTodos.filter((t) => !t.completed)
+  const nayunIncomplete = nayunTodos.filter((t) => !t.completed)
+  const junhyungIncomplete = junhyungTodos.filter((t) => !t.completed)
   const dday = calcDday(startDate)
 
   const hour = now.getHours()
@@ -297,23 +301,44 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {/* 오늘 할 일 */}
+        {/* 나윤 오늘 할 일 */}
         <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>오늘 할 일</h2>
-            <Link href={`/?view=today&date=${today}`} style={{ fontSize: '12px', color: '#0066cc' }}>전체 보기</Link>
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>🌸 나윤 오늘 할 일</h2>
+            <Link href={`/?view=today&date=${today}&owner=nayun`} style={{ fontSize: '12px', color: '#0066cc' }}>전체 보기</Link>
           </div>
-          {todayIncomplete.length === 0 ? (
+          {nayunIncomplete.length === 0 ? (
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>오늘 할 일이 없습니다 🎉</p>
           ) : (
             <div className="space-y-2">
-              {todayIncomplete.slice(0, 5).map((todo) => (
+              {nayunIncomplete.slice(0, 5).map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLOR[todo.priority] }} />
                   <span className="truncate" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                 </div>
               ))}
-              {todayIncomplete.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{todayIncomplete.length - 5}개 더</p>}
+              {nayunIncomplete.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{nayunIncomplete.length - 5}개 더</p>}
+            </div>
+          )}
+        </div>
+
+        {/* 준형 오늘 할 일 */}
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>🦁 준형 오늘 할 일</h2>
+            <Link href={`/?view=today&date=${today}&owner=junhyung`} style={{ fontSize: '12px', color: '#0066cc' }}>전체 보기</Link>
+          </div>
+          {junhyungIncomplete.length === 0 ? (
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>오늘 할 일이 없습니다 🎉</p>
+          ) : (
+            <div className="space-y-2">
+              {junhyungIncomplete.slice(0, 5).map((todo) => (
+                <div key={todo.id} className="flex items-start gap-2">
+                  <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLOR[todo.priority] }} />
+                  <span className="truncate" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
+                </div>
+              ))}
+              {junhyungIncomplete.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{junhyungIncomplete.length - 5}개 더</p>}
             </div>
           )}
         </div>

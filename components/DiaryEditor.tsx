@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import PhotoCollage from '@/components/PhotoCollage'
+import { useAuth } from '@/components/AuthProvider'
 
 const MOODS = [
   { value: 'great', emoji: '😊', label: '최고' },
@@ -23,6 +24,7 @@ interface DiaryComment { id: number; diaryDate: string; content: string; created
 export default function DiaryEditor() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { user } = useAuth()
   const date = searchParams.get('date') ?? new Date().toISOString().slice(0, 10)
 
   const [entry, setEntry] = useState<Entry | null>(null)
@@ -91,7 +93,7 @@ export default function DiaryEditor() {
     await fetch(`/api/diary/${date}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, mood, photos }),
+      body: JSON.stringify({ title, content, mood, photos, actor: user }),
     })
     setSaving(false)
     setDirty(false)

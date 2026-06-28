@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { getMonthGrid, toDateStr, isToday } from '@/lib/calendar'
 import CalendarHeader from '@/components/CalendarHeader'
 import PhotoCollage from '@/components/PhotoCollage'
+import { useAuth } from '@/components/AuthProvider'
 
 const getDriveImageUrl = (fileId: string) =>
   `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`
@@ -28,6 +29,7 @@ interface DiaryComment { id: number; diaryDate: string; content: string; created
 export default function DiaryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { user } = useAuth()
 
   const dateParam = searchParams.get('date')
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -121,7 +123,7 @@ export default function DiaryContent() {
     await fetch(`/api/diary/${selectedDate}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: editTitle, content: editContent, mood: editMood, photos: editPhotos }),
+      body: JSON.stringify({ title: editTitle, content: editContent, mood: editMood, photos: editPhotos, actor: user }),
     })
     setSaving(false)
     setDirty(false)
