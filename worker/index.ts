@@ -1,11 +1,11 @@
-export {}
-declare let self: ServiceWorkerGlobalScope
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sw = self as any
 
-self.addEventListener('push', (event) => {
+sw.addEventListener('push', (event: any) => {
   if (!event.data) return
-  const { title, body } = event.data.json() as { title: string; body: string }
+  const { title, body } = event.data.json()
   event.waitUntil(
-    self.registration.showNotification(title, {
+    sw.registration.showNotification(title, {
       body,
       icon: '/icons/icon-192.png',
       badge: '/icons/icon-192.png',
@@ -14,12 +14,12 @@ self.addEventListener('push', (event) => {
   )
 })
 
-self.addEventListener('notificationclick', (event) => {
+sw.addEventListener('notificationclick', (event: any) => {
   event.notification.close()
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+    sw.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients: any[]) => {
       if (clients.length > 0) return clients[0].focus()
-      return self.clients.openWindow('/')
+      return sw.clients.openWindow('/')
     })
   )
 })
