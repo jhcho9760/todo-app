@@ -21,6 +21,7 @@ export interface TripPlace {
   memo: string
   visitedAt: string | null
   photoData: string | null
+  dayIndex?: number | null
 }
 
 interface Props {
