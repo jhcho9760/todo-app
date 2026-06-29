@@ -334,35 +334,35 @@ export default function TravelContent() {
       {/* 지도/계획 영역 */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
 
+        {/* 모바일 여행 선택 + 버튼 (항상 표시, md 이상에서는 숨김) */}
+        <div className="flex md:hidden" style={{ gap: '8px', padding: '10px 12px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+          <select
+            value={selectedTripId ?? ''}
+            onChange={(e) => e.target.value ? handleSelectTrip(Number(e.target.value)) : setSelectedTripId(null)}
+            style={{ ...inputStyle, flex: 1, appearance: 'none', paddingRight: '32px', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23999\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+          >
+            <option value="">여행을 선택하세요</option>
+            {trips.map((t) => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
+          {selectedTrip && (
+            <button
+              onClick={() => { setEditingTrip(selectedTrip); setTripFormOpen(true) }}
+              style={{ backgroundColor: 'var(--bg-hover)', color: 'var(--text-primary)', fontSize: '16px', padding: '8px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}
+            >✏️</button>
+          )}
+          <button
+            onClick={() => { setEditingTrip(null); setTripFormOpen(true) }}
+            style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0 }}
+          >+ 새 여행</button>
+        </div>
+
         {/* 지도 탭 영역 */}
         <div style={{ position: 'relative', overflow: 'hidden', flex: 1, display: activeTab === 'map' ? 'block' : 'none' }}>
         {/* 상단 컨트롤 */}
         <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px', flexDirection: 'column' }}>
-          {/* 모바일 여행 선택 + 버튼 (md 이상에서는 숨김, 계획 탭에서도 숨김) */}
-          <div className={activeTab === 'map' ? 'flex md:hidden' : 'hidden'} style={{ gap: '8px' }}>
-            <select
-              value={selectedTripId ?? ''}
-              onChange={(e) => e.target.value ? handleSelectTrip(Number(e.target.value)) : setSelectedTripId(null)}
-              style={{ ...inputStyle, flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', appearance: 'none', paddingRight: '32px', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23999\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
-            >
-              <option value="">여행을 선택하세요</option>
-              {trips.map((t) => (
-                <option key={t.id} value={t.id}>{t.name}</option>
-              ))}
-            </select>
-            {selectedTrip && (
-              <button
-                onClick={() => { setEditingTrip(selectedTrip); setTripFormOpen(true) }}
-                style={{ backgroundColor: 'rgba(255,255,255,0.9)', color: '#333', fontSize: '16px', padding: '8px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-              >✏️</button>
-            )}
-            <button
-              onClick={() => { setEditingTrip(null); setTripFormOpen(true) }}
-              style={{ backgroundColor: '#0066cc', color: '#fff', fontSize: '14px', fontWeight: 600, padding: '8px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-            >
-              + 새 여행
-            </button>
-          </div>
+          <div style={{ display: 'none' }}>{/* 여행 선택은 위로 이동 */}</div>
 
           {/* 모바일 장소 검색 (여행 선택 시만) */}
           {selectedTrip && (
