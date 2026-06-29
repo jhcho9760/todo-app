@@ -11,11 +11,17 @@ const TODO_VIEWS = [
   { label: '월', view: 'month' },
 ]
 
-const DIARY_ITEMS = [
+type DiaryItem =
+  | { label: string; href: string }
+  | { label: string; children: { label: string; href: string }[] }
+
+const DIARY_ITEMS: DiaryItem[] = [
   { label: '데이트 달력', href: '/diary' },
   { label: '데이트 가계부', href: '/ledger' },
-  { label: '여행 지도', href: '/travel' },
-  { label: '여행 계획', href: '/travel?tab=plan' },
+  { label: '여행', children: [
+    { label: '여행 지도', href: '/travel' },
+    { label: '여행 계획', href: '/travel?tab=plan' },
+  ]},
   { label: '기념일', href: '/anniversary' },
   { label: '우리 리스트', href: '/wishlist' },
   { label: '사진 앨범', href: '/album' },
@@ -165,26 +171,34 @@ export default function MobileSidebar() {
         <SectionHeader label="❤️" open={diaryOpen} onToggle={() => setDiaryOpen(!diaryOpen)} />
         {diaryOpen && (
           <nav className="mt-1 flex flex-col gap-0.5 px-2">
-            {DIARY_ITEMS.map(({ label, href }) => {
-              const [hrefPath, hrefQuery] = href.split('?')
-              const hrefTab = hrefQuery ? new URLSearchParams(hrefQuery).get('tab') : null
-              const active = pathname.startsWith(hrefPath) &&
-                (hrefPath !== '/travel' || (hrefTab === 'plan' ? currentTab === 'plan' : currentTab !== 'plan'))
+            {DIARY_ITEMS.map((item) => {
+              if ('children' in item) {
+                const groupActive = pathname.startsWith('/travel')
+                return (
+                  <div key={item.label}>
+                    <div className="flex items-center gap-2 px-3 py-2.5" style={{ fontSize: '15px', fontWeight: groupActive ? 600 : 400, color: groupActive ? '#0066cc' : 'var(--text-primary)' }}>
+                      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: groupActive ? '#0066cc' : '#d2d2d7' }} />
+                      {item.label}
+                    </div>
+                    {item.children.map(({ label, href }) => {
+                      const [hrefPath, hrefQuery] = href.split('?')
+                      const hrefTab = hrefQuery ? new URLSearchParams(hrefQuery).get('tab') : null
+                      const active = pathname.startsWith(hrefPath) && (hrefTab === 'plan' ? currentTab === 'plan' : currentTab !== 'plan')
+                      return (
+                        <Link key={href} href={href} className="flex items-center gap-2 py-2 rounded-[8px]" style={{ fontSize: '14px', fontWeight: active ? 600 : 400, color: active ? '#0066cc' : 'var(--text-secondary)', backgroundColor: active ? 'rgba(0,102,204,0.08)' : 'transparent', paddingLeft: '32px', paddingRight: '12px' }}>
+                          <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
+                          {label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )
+              }
+              const active = pathname.startsWith(item.href)
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-[8px]"
-                  style={{
-                    fontSize: '15px',
-                    fontWeight: active ? 600 : 400,
-                    color: active ? '#0066cc' : 'var(--text-primary)',
-                    backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent',
-                  }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
-                  {label}
+                <Link key={item.href} href={item.href} className="flex items-center gap-2 px-3 py-2.5 rounded-[8px]" style={{ fontSize: '15px', fontWeight: active ? 600 : 400, color: active ? '#0066cc' : 'var(--text-primary)', backgroundColor: active ? 'rgba(0,102,204,0.1)' : 'transparent' }}>
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: active ? '#0066cc' : '#d2d2d7' }} />
+                  {item.label}
                 </Link>
               )
             })}
