@@ -66,14 +66,16 @@ model DatePlace {
 }
 
 model Trip {
-  id           Int         @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   name         String
   startDate    String
   endDate      String?
-  memo         String      @default("")
+  memo         String          @default("")
   coverPlaceId Int?
-  createdAt    DateTime    @default(now())
+  createdAt    DateTime        @default(now())
   places       TripPlace[]
+  checklists   TripChecklist[]
+  expenses     TripExpense[]
 }
 
 model DiaryComment {
@@ -118,6 +120,25 @@ model TripPlace {
   memo      String   @default("")
   visitedAt String?
   photoData String?
+  dayIndex  Int?
   createdAt DateTime @default(now())
   trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
+
+model TripChecklist {
+  id       Int     @id @default(autoincrement())
+  tripId   Int
+  category String
+  text     String
+  checked  Boolean @default(false)
+  trip     Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
+
+model TripExpense {
+  id     Int    @id @default(autoincrement())
+  tripId Int
+  date   String
+  name   String
+  amount Int
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
 }
