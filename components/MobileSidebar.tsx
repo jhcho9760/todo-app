@@ -46,7 +46,7 @@ export default function MobileSidebar() {
     <>
       {/* 하단 햄버거 버튼 */}
       <button
-        className="md:hidden fixed z-[60] flex items-center justify-center"
+        className={`md:hidden fixed z-[60] flex items-center justify-center${currentTab === 'plan' ? ' hidden' : ''}`}
         onClick={() => setOpen(true)}
         style={{
           bottom: 'calc(16px + env(safe-area-inset-bottom))',
