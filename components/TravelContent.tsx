@@ -335,7 +335,7 @@ export default function TravelContent() {
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
 
         {/* 지도 탭 영역 */}
-        <div style={{ position: 'relative', overflow: 'hidden', flex: 1, display: activeTab === 'map' || !selectedTrip ? 'block' : 'none' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', flex: 1, display: activeTab === 'map' ? 'block' : 'none' }}>
         {/* 상단 컨트롤 */}
         <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px', flexDirection: 'column' }}>
           {/* 모바일 여행 선택 + 버튼 (md 이상에서는 숨김, 계획 탭에서도 숨김) */}
@@ -417,9 +417,15 @@ export default function TravelContent() {
         </div>{/* /지도 탭 영역 */}
 
         {/* 계획 탭 */}
-        {selectedTrip && activeTab === 'plan' && (
+        {activeTab === 'plan' && (
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            <TripPlanTab trip={selectedTrip} onPlacesChange={fetchTrips} />
+            {selectedTrip ? (
+              <TripPlanTab trip={selectedTrip} onPlacesChange={fetchTrips} />
+            ) : (
+              <div style={{ padding: '40px 24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
+                여행을 선택해주세요
+              </div>
+            )}
           </div>
         )}
       </div>
