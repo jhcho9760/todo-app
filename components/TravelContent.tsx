@@ -425,7 +425,7 @@ export default function TravelContent() {
       </div>
 
       {/* 모바일 바텀시트 — 장소 목록 */}
-      {selectedTrip && !panel && (
+      {selectedTrip && !panel && activeTab === 'map' && (
         <div
           className="flex md:hidden flex-col"
           style={{
