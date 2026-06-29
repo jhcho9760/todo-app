@@ -338,8 +338,8 @@ export default function TravelContent() {
         <div style={{ position: 'relative', overflow: 'hidden', flex: 1, display: activeTab === 'map' || !selectedTrip ? 'block' : 'none' }}>
         {/* 상단 컨트롤 */}
         <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px', flexDirection: 'column' }}>
-          {/* 모바일 여행 선택 + 버튼 (md 이상에서는 숨김) */}
-          <div className="flex md:hidden" style={{ gap: '8px' }}>
+          {/* 모바일 여행 선택 + 버튼 (md 이상에서는 숨김, 계획 탭에서도 숨김) */}
+          <div className={activeTab === 'map' ? 'flex md:hidden' : 'hidden'} style={{ gap: '8px' }}>
             <select
               value={selectedTripId ?? ''}
               onChange={(e) => e.target.value ? handleSelectTrip(Number(e.target.value)) : setSelectedTripId(null)}
