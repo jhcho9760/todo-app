@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import TripFormSheet, { Trip, TripPlace } from './TripFormSheet'
 import TripPlanTab from './TripPlanTab'
 
@@ -32,6 +32,7 @@ const inputStyle: React.CSSProperties = {
 
 export default function TravelContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const activeTab = searchParams.get('tab') === 'plan' ? 'plan' : 'map'
 
   const mapRef = useRef<KakaoMap | null>(null)
@@ -418,7 +419,18 @@ export default function TravelContent() {
 
         {/* 계획 탭 */}
         {activeTab === 'plan' && (
-          <div style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+            <div className="flex md:hidden" style={{ alignItems: 'center', padding: '10px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+              <button
+                onClick={() => router.push('/travel')}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: '#0066cc', fontSize: '15px', padding: 0 }}
+              >
+                <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+                  <path d="M7 1L1 7L7 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                지도로 돌아가기
+              </button>
+            </div>
             {selectedTrip ? (
               <TripPlanTab trip={selectedTrip} onPlacesChange={fetchTrips} />
             ) : (
