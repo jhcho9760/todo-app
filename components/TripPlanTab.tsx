@@ -50,8 +50,6 @@ interface Props {
   onPlacesChange: () => void
 }
 
-type TripPlaceWithDay = TripPlace & { dayIndex?: number | null }
-
 export default function TripPlanTab({ trip, onPlacesChange }: Props) {
   const [checklists, setChecklists] = useState<TripChecklist[]>([])
   const [expenses, setExpenses] = useState<TripExpense[]>([])
@@ -65,12 +63,16 @@ export default function TripPlanTab({ trip, onPlacesChange }: Props) {
   }, [trip.id])
 
   const assignDay = async (placeId: number, dayIndex: number | null) => {
-    await fetch(`/api/trips/${trip.id}/places/${placeId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dayIndex }),
-    })
-    onPlacesChange()
+    try {
+      await fetch(`/api/trips/${trip.id}/places/${placeId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dayIndex }),
+      })
+      onPlacesChange()
+    } catch (e) {
+      console.error('장소 배정 실패:', e)
+    }
   }
 
   const addChecklist = async (category: string) => {
@@ -124,11 +126,11 @@ export default function TripPlanTab({ trip, onPlacesChange }: Props) {
   const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0)
 
   const dayDates = trip.startDate && trip.endDate ? getDayDates(trip.startDate, trip.endDate) : []
-  const places = trip.places as TripPlaceWithDay[]
-  const unassignedPlaces = places.filter(p => !p.dayIndex)
+  const places = trip.places
+  const unassignedPlaces = places.filter(p => p.dayIndex == null)
 
   return (
-    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '24px', overflowY: 'auto', height: '100%' }}>
+    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '24px', height: '100%' }}>
 
       {/* 날짜별 일정 */}
       {dayDates.length > 0 && (
@@ -171,7 +173,7 @@ export default function TripPlanTab({ trip, onPlacesChange }: Props) {
                   <select
                     defaultValue=""
                     onChange={(e) => { if (e.target.value) assignDay(Number(e.target.value), dayNum) }}
-                    style={{ ...inputStyle, fontSize: '13px', marginTop: '4px' }}
+                    style={{ ...inputStyle, fontSize: '16px', marginTop: '4px' }}
                   >
                     <option value="">+ 장소 추가</option>
                     {unassignedPlaces.map(p => (
