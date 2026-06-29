@@ -103,14 +103,17 @@ export default function TripPlanTab({ trip, onPlacesChange }: Props) {
     const { date, name, amount } = expenseForm
     if (!date || !name || !amount) return
     setSaving(true)
-    const item: TripExpense = await fetch(`/api/trips/${trip.id}/expenses`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date, name, amount: Number(amount) }),
-    }).then(r => r.json())
-    setExpenses(prev => [...prev, item])
-    setExpenseForm({ date: trip.startDate ?? '', name: '', amount: '' })
-    setSaving(false)
+    try {
+      const item: TripExpense = await fetch(`/api/trips/${trip.id}/expenses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, name, amount: Number(amount) }),
+      }).then(r => r.json())
+      setExpenses(prev => [...prev, item])
+      setExpenseForm({ date: trip.startDate ?? '', name: '', amount: '' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   const deleteExpense = async (id: number) => {
@@ -210,7 +213,7 @@ export default function TripPlanTab({ trip, onPlacesChange }: Props) {
                   onChange={(e) => setNewCheckText(prev => ({ ...prev, [cat]: e.target.value }))}
                   onKeyDown={(e) => e.key === 'Enter' && addChecklist(cat)}
                   placeholder="항목 추가..."
-                  style={{ ...inputStyle, flex: 1, fontSize: '14px', padding: '6px 10px' }}
+                  style={{ ...inputStyle, flex: 1, fontSize: '16px', padding: '6px 10px' }}
                 />
                 <button
                   onClick={() => addChecklist(cat)}
