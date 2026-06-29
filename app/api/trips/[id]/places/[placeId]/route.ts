@@ -19,6 +19,19 @@ export async function PUT(
   return NextResponse.json(place)
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; placeId: string }> }
+) {
+  const { placeId } = await params
+  const { dayIndex } = await request.json()
+  const place = await prisma.tripPlace.update({
+    where: { id: Number(placeId) },
+    data: { dayIndex: dayIndex ?? null },
+  })
+  return NextResponse.json(place)
+}
+
 export async function DELETE(
   _: NextRequest,
   { params }: { params: Promise<{ id: string; placeId: string }> }
