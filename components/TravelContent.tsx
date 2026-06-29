@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import TripFormSheet, { Trip, TripPlace } from './TripFormSheet'
 import TripPlanTab from './TripPlanTab'
 
@@ -30,6 +31,9 @@ const inputStyle: React.CSSProperties = {
 }
 
 export default function TravelContent() {
+  const searchParams = useSearchParams()
+  const activeTab = searchParams.get('tab') === 'plan' ? 'plan' : 'map'
+
   const mapRef = useRef<KakaoMap | null>(null)
   const markersRef = useRef<Map<number, KakaoMarker>>(new Map())
   const labelsRef = useRef<KakaoOverlay[]>([])
@@ -37,7 +41,6 @@ export default function TravelContent() {
 
   const [trips, setTrips] = useState<Trip[]>([])
   const [selectedTripId, setSelectedTripId] = useState<number | null>(null)
-  const [activeTab, setActiveTab] = useState<'map' | 'plan'>('map')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<KakaoPlace[]>([])
   const [panel, setPanel] = useState<
@@ -234,7 +237,6 @@ export default function TravelContent() {
     setSelectedTripId(tripId)
     setExpandedTripId((prev) => (prev === tripId ? null : tripId))
     setPanel(null)
-    setActiveTab('map')
   }, [])
 
   const handleSelectPlace = useCallback((place: TripPlace) => {
@@ -331,26 +333,6 @@ export default function TravelContent() {
 
       {/* 지도/계획 영역 */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-
-        {/* 탭 버튼 (여행 선택 시만 표시) */}
-        {selectedTrip && (
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', flexShrink: 0 }}>
-            {(['map', 'plan'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  flex: 1, padding: '10px', fontSize: '14px', fontWeight: activeTab === tab ? 600 : 400,
-                  color: activeTab === tab ? '#0066cc' : 'var(--text-secondary)',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  borderBottom: activeTab === tab ? '2px solid #0066cc' : '2px solid transparent',
-                }}
-              >
-                {tab === 'map' ? '🗺️ 지도' : '📋 계획'}
-              </button>
-            ))}
-          </div>
-        )}
 
         {/* 지도 탭 영역 */}
         <div style={{ position: 'relative', overflow: 'hidden', flex: 1, display: activeTab === 'map' || !selectedTrip ? 'block' : 'none' }}>

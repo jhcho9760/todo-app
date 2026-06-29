@@ -14,7 +14,8 @@ const TODO_VIEWS = [
 const DIARY_ITEMS = [
   { label: '데이트 달력', href: '/diary' },
   { label: '데이트 가계부', href: '/ledger' },
-  { label: '여행', href: '/travel' },
+  { label: '여행 지도', href: '/travel' },
+  { label: '여행 계획', href: '/travel?tab=plan' },
   { label: '기념일', href: '/anniversary' },
   { label: '우리 리스트', href: '/wishlist' },
   { label: '사진 앨범', href: '/album' },
@@ -25,6 +26,7 @@ export default function Sidebar() {
   const pathname = usePathname()
   const currentView = searchParams.get('view')
   const currentOwner = searchParams.get('owner')
+  const currentTab = searchParams.get('tab')
   const isDashboard = pathname === '/' && !currentView
   const isDiary = pathname.startsWith('/diary') || pathname.startsWith('/ledger') || pathname.startsWith('/travel') || pathname.startsWith('/anniversary') || pathname.startsWith('/wishlist') || pathname.startsWith('/album')
   const [nayunOpen, setNayunOpen] = useState(true)
@@ -115,7 +117,10 @@ export default function Sidebar() {
       {diaryOpen && (
         <nav className="mt-1 flex flex-col gap-0.5 px-2">
           {DIARY_ITEMS.map(({ label, href }) => {
-            const active = pathname.startsWith(href)
+            const [hrefPath, hrefQuery] = href.split('?')
+            const hrefTab = hrefQuery ? new URLSearchParams(hrefQuery).get('tab') : null
+            const active = pathname.startsWith(hrefPath) &&
+              (hrefPath !== '/travel' || (hrefTab === 'plan' ? currentTab === 'plan' : currentTab !== 'plan'))
             return (
               <Link
                 key={href}
