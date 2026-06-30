@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Todo } from '@/types/todo'
 import { toDateStr } from '@/lib/calendar'
+import { useAuth } from '@/components/AuthProvider'
 
 const PRIORITY_COLOR: Record<string, string> = { HIGH: '#ff3b30', MEDIUM: '#ff9500', LOW: '#7a7a7a' }
 const MOOD_EMOJI: Record<string, string> = { great: '😄', good: '🙂', neutral: '😐', bad: '😔', awful: '😢', heart: '❤️', fire: '❤️‍🔥' }
@@ -40,6 +41,7 @@ function calcDday(startDate: string): { days: number; label: string } | null {
 }
 
 export default function Dashboard() {
+  const { userLabel } = useAuth()
   const [nayunTodos, setNayunTodos] = useState<Todo[]>([])
   const [junhyungTodos, setJunhyungTodos] = useState<Todo[]>([])
   const [allTodos, setAllTodos] = useState<Todo[]>([])
@@ -147,7 +149,7 @@ export default function Dashboard() {
   return (
     <main className="px-4 md:px-8 py-6 md:py-10" style={{ maxWidth: '960px', paddingBottom: '80px' }}>
       <div className="mb-6 md:mb-8">
-        <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '6px' }}>{greeting}, 나윤님</p>
+        <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '6px' }}>{greeting}, {userLabel}님</p>
         <h1 className="font-semibold" style={{ fontSize: '28px', color: 'var(--text-primary)', letterSpacing: '-0.28px' }}>대시보드</h1>
       </div>
 
