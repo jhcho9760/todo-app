@@ -314,13 +314,12 @@ export default function Dashboard() {
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>오늘 할 일이 없습니다 🎉</p>
           ) : (
             <div className="space-y-2">
-              {nayunIncomplete.slice(0, 5).map((todo) => (
+              {nayunIncomplete.map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLOR[todo.priority] }} />
                   <span className="truncate" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                 </div>
               ))}
-              {nayunIncomplete.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{nayunIncomplete.length - 5}개 더</p>}
             </div>
           )}
         </div>
@@ -335,13 +334,12 @@ export default function Dashboard() {
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>오늘 할 일이 없습니다 🎉</p>
           ) : (
             <div className="space-y-2">
-              {junhyungIncomplete.slice(0, 5).map((todo) => (
+              {junhyungIncomplete.map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLOR[todo.priority] }} />
                   <span className="truncate" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                 </div>
               ))}
-              {junhyungIncomplete.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{junhyungIncomplete.length - 5}개 더</p>}
             </div>
           )}
         </div>
@@ -358,7 +356,7 @@ export default function Dashboard() {
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없습니다 👍</p>
           ) : (
             <div className="space-y-2">
-              {nayunHighPriority.slice(0, 5).map((todo) => (
+              {nayunHighPriority.map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#ff3b30' }} />
                   <div className="min-w-0">
@@ -371,7 +369,6 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-              {nayunHighPriority.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{nayunHighPriority.length - 5}개 더</p>}
             </div>
           )}
         </div>
@@ -388,7 +385,7 @@ export default function Dashboard() {
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>없습니다 👍</p>
           ) : (
             <div className="space-y-2">
-              {junhyungHighPriority.slice(0, 5).map((todo) => (
+              {junhyungHighPriority.map((todo) => (
                 <div key={todo.id} className="flex items-start gap-2">
                   <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLOR[todo.priority] }} />
                   <div className="min-w-0">
@@ -401,7 +398,6 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-              {junhyungHighPriority.length > 5 && <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>+{junhyungHighPriority.length - 5}개 더</p>}
             </div>
           )}
         </div>
