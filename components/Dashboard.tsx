@@ -363,7 +363,7 @@ export default function Dashboard() {
                     <span className="truncate block" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                     {todo.dueDate && (
                       <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                        {(() => { const [y, m, d] = todo.dueDate!.split('T')[0].split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) })()}
+                        {(() => { const f = (iso: string) => { const [y, m, d] = iso.split('T')[0].split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) }; return todo.startDate ? `${f(todo.startDate)} ~ ${f(todo.dueDate!)}` : f(todo.dueDate!) })()}
                       </span>
                     )}
                   </div>
@@ -392,7 +392,7 @@ export default function Dashboard() {
                     <span className="truncate block" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{todo.title}</span>
                     {todo.dueDate && (
                       <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                        {(() => { const [y, m, d] = todo.dueDate!.split('T')[0].split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) })()}
+                        {(() => { const f = (iso: string) => { const [y, m, d] = iso.split('T')[0].split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) }; return todo.startDate ? `${f(todo.startDate)} ~ ${f(todo.dueDate!)}` : f(todo.dueDate!) })()}
                       </span>
                     )}
                   </div>

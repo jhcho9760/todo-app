@@ -28,11 +28,14 @@ export default function TodoItem({ todo, onUpdate, onDelete }: Props) {
     )
   }
 
+  const fmt = (iso: string) => {
+    const [y, m, d] = iso.split('T')[0].split('-').map(Number)
+    return new Date(y, m - 1, d).toLocaleDateString('ko-KR')
+  }
   const dueDate = todo.dueDate
-    ? (() => {
-        const [y, m, d] = todo.dueDate!.split('T')[0].split('-').map(Number)
-        return new Date(y, m - 1, d).toLocaleDateString('ko-KR')
-      })()
+    ? todo.startDate
+      ? `${fmt(todo.startDate)} ~ ${fmt(todo.dueDate)}`
+      : fmt(todo.dueDate)
     : null
 
   return (

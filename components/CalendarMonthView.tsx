@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Todo } from '@/types/todo'
-import { toDateStr, getMonthGrid, isSameDay, isToday } from '@/lib/calendar'
+import { toDateStr, getMonthGrid, todoCoversDay, isToday } from '@/lib/calendar'
 import CalendarHeader from './CalendarHeader'
 
 interface Props {
@@ -27,7 +27,7 @@ export default function CalendarMonthView({ date, todos, onMonthChange, onDayCli
   }
 
   const todosForDay = (day: Date) =>
-    todos.filter((t) => t.dueDate && isSameDay(new Date(t.dueDate), day))
+    todos.filter((t) => todoCoversDay(t, day))
 
   const isCurrentMonth = (day: Date) => day.getMonth() === date.getMonth()
 

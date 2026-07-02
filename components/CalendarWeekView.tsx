@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Todo, CreateTodoInput, UpdateTodoInput } from '@/types/todo'
-import { toDateStr, getWeekDays, isSameDay, isToday } from '@/lib/calendar'
+import { toDateStr, getWeekDays, todoCoversDay, isToday } from '@/lib/calendar'
 import CalendarHeader from './CalendarHeader'
 import TodoItem from './TodoItem'
 import TodoForm from './TodoForm'
@@ -37,7 +37,7 @@ export default function CalendarWeekView({ date, todos, onWeekChange, onUpdate, 
   }
 
   const todosForDay = (day: Date) =>
-    todos.filter((t) => t.dueDate && isSameDay(new Date(t.dueDate), day))
+    todos.filter((t) => todoCoversDay(t, day))
 
   const handleCreate = (data: CreateTodoInput) => {
     onCreate({ ...data, dueDate: addingDate ?? undefined })

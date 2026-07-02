@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { CreateTodoInput } from '@/types/todo'
 import { sendPush, otherUser, userLabel } from '@/lib/push'
+import { normalizeTodoDates } from '@/lib/calendar'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -30,10 +31,24 @@ export async function GET(request: NextRequest) {
         ? { dueDate: null }
         : (dateFrom || dateTo)
           ? {
-              dueDate: {
-                ...(dateFrom && { gte: new Date(dateFrom + 'T00:00:00Z') }),
-                ...(dateTo && { lte: new Date(dateTo + 'T23:59:59Z') }),
-              },
+              OR: [
+                // 하루짜리: dueDate가 범위 안
+                {
+                  startDate: null,
+                  dueDate: {
+                    ...(dateFrom && { gte: new Date(dateFrom + 'T00:00:00Z') }),
+                    ...(dateTo && { lte: new Date(dateTo + 'T23:59:59Z') }),
+                  },
+                },
+                // 기간: 시작<=to AND 종료>=from (범위와 겹침)
+                {
+                  startDate: {
+                    not: null,
+                    ...(dateTo && { lte: new Date(dateTo + 'T23:59:59Z') }),
+                  },
+                  ...(dateFrom && { dueDate: { gte: new Date(dateFrom + 'T00:00:00Z') } }),
+                },
+              ],
             }
           : {}),
     },
@@ -52,12 +67,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'title is required' }, { status: 400 })
   }
 
+  const { startDate, dueDate } = normalizeTodoDates(body.startDate, body.dueDate)
+
   const todo = await prisma.todo.create({
     data: {
       title: body.title.trim(),
       description: body.description ?? null,
       priority: body.priority ?? 'MEDIUM',
-      dueDate: body.dueDate ? new Date(body.dueDate) : null,
+      startDate,
+      dueDate,
       category: body.category ?? null,
       tags: JSON.stringify(body.tags ?? []),
       owner: body.owner ?? 'nayun',

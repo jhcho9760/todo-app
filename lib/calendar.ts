@@ -17,6 +17,40 @@ export function isToday(date: Date): boolean {
   return isSameDay(date, new Date())
 }
 
+// 할 일이 특정 날짜를 포함하는지 (기간: startDate ~ dueDate, 하루짜리: dueDate)
+export function todoCoversDay(
+  todo: { startDate: string | null; dueDate: string | null },
+  day: Date
+): boolean {
+  if (!todo.dueDate) return false
+  const end = new Date(todo.dueDate)
+  const start = todo.startDate ? new Date(todo.startDate) : end
+  const target = new Date(day.getFullYear(), day.getMonth(), day.getDate())
+  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate())
+  const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate())
+  return target >= startDay && target <= endDay
+}
+
+// 입력된 시작일/종료일을 저장 규칙에 맞게 정규화
+// - 하나만 있거나 같으면 하루짜리(startDate=null, dueDate=그 날)
+// - 둘 다 있고 다르면 기간(시작<=종료로 정렬)
+export function normalizeTodoDates(
+  startStr?: string | null,
+  endStr?: string | null
+): { startDate: Date | null; dueDate: Date | null } {
+  const dates = [startStr, endStr]
+    .filter((s): s is string => !!s)
+    .map((s) => new Date(s))
+    .sort((a, b) => a.getTime() - b.getTime())
+
+  if (dates.length === 0) return { startDate: null, dueDate: null }
+  if (dates.length === 1) return { startDate: null, dueDate: dates[0] }
+  if (dates[0].getTime() === dates[1].getTime()) {
+    return { startDate: null, dueDate: dates[1] }
+  }
+  return { startDate: dates[0], dueDate: dates[1] }
+}
+
 export function getWeekDays(date: Date): Date[] {
   const day = date.getDay() // 0=일, 6=토
   const sunday = new Date(date)

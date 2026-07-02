@@ -37,6 +37,7 @@ model Todo {
   description String?
   completed   Boolean   @default(false)
   priority    String    @default("MEDIUM")
+  startDate   DateTime?
   dueDate     DateTime?
   category    String?
   tags        String    @default("[]")

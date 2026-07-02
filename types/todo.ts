@@ -6,6 +6,7 @@ export interface Todo {
   description: string | null
   completed: boolean
   priority: Priority
+  startDate: string | null
   dueDate: string | null
   category: string | null
   tags: string[]
@@ -18,6 +19,7 @@ export interface CreateTodoInput {
   title: string
   description?: string
   priority?: Priority
+  startDate?: string
   dueDate?: string
   category?: string
   tags?: string[]
@@ -29,6 +31,7 @@ export interface UpdateTodoInput {
   description?: string
   completed?: boolean
   priority?: Priority
+  startDate?: string | null
   dueDate?: string | null
   category?: string
   tags?: string[]

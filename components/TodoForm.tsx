@@ -34,6 +34,9 @@ export default function TodoForm({ onSubmit, initialValues, onCancel, initialDat
   const [title, setTitle] = useState(initialValues?.title ?? '')
   const [description, setDescription] = useState(initialValues?.description ?? '')
   const [priority, setPriority] = useState<Priority>(initialValues?.priority ?? 'MEDIUM')
+  const [startDate, setStartDate] = useState(
+    initialValues?.startDate ? initialValues.startDate.split('T')[0] : ''
+  )
   const [dueDate, setDueDate] = useState(
     initialValues?.dueDate
       ? initialValues.dueDate.split('T')[0]
@@ -49,6 +52,7 @@ export default function TodoForm({ onSubmit, initialValues, onCancel, initialDat
       title: title.trim(),
       description: description.trim() || undefined,
       priority,
+      startDate: startDate || undefined,
       dueDate: dueDate || undefined,
       category: category.trim() || undefined,
       tags: tagInput
@@ -95,18 +99,34 @@ export default function TodoForm({ onSubmit, initialValues, onCancel, initialDat
           ))}
         </select>
         <input
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          style={{ ...inputStyle, width: "auto" }}
-        />
-        <input
           type="text"
           placeholder="카테고리"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           style={{ ...inputStyle, flex: "1", minWidth: "120px" }}
         />
+      </div>
+      <div className="flex gap-2 flex-wrap items-end">
+        <label className="flex flex-col gap-1" style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+          시작일 (선택)
+          <input
+            type="date"
+            value={startDate}
+            max={dueDate || undefined}
+            onChange={(e) => setStartDate(e.target.value)}
+            style={{ ...inputStyle, width: "auto" }}
+          />
+        </label>
+        <label className="flex flex-col gap-1" style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+          종료일
+          <input
+            type="date"
+            value={dueDate}
+            min={startDate || undefined}
+            onChange={(e) => setDueDate(e.target.value)}
+            style={{ ...inputStyle, width: "auto" }}
+          />
+        </label>
       </div>
       <input
         type="text"
